@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "spawns": [
+    {
+      "roomId": "R1_BOSS_RESIDUE",
+      "bossId": "BOSS_RESIDUE_BROKER",
+      "cooldownSec": 1800,
+      "reward": {
+        "expMult": 2.0,
+        "goldMult": 2.0
+      },
+      "rewardItemsGuaranteed": [
+        {
+          "itemId": "ITEM_TROPHY_BOSS_S1_RESIDUE_BROKER",
+          "qty": 1
+        }
+      ],
+      "whenCooldown": "FALLBACK_NORMAL"
+    },
+    {
+      "roomId": "R2_BOSS_TOME",
+      "bossId": "BOSS_TOME_WARDEN",
+      "cooldownSec": 1800,
+      "reward": {
+        "expMult": 2.0,
+        "goldMult": 2.0
+      },
+      "rewardItemsGuaranteed": [
+        {
+          "itemId": "ITEM_TROPHY_BOSS_S02",
+          "qty": 1
+        }
+      ],
+      "whenCooldown": "FALLBACK_NORMAL"
+    }
+  ]
+}
+

@@ -1,0 +1,145 @@
+[
+  {
+    "id": "SHOP_GH_MARKET",
+    "roomId": "GH_MARKET",
+    "title": "시장",
+    "items": [
+      {"itemId": "ITEM_POTION_HP_S", "priceGold": 50},
+      {"itemId": "ITEM_POTION_HP_M", "priceGold": 100},
+      {"itemId": "ITEM_POTION_HP_L", "priceGold": 250}
+    ]
+  },
+  {
+    "id": "SHOP_S1_LEDGER_EXCHANGE",
+    "roomId": "GH_LEDGER_OFFICE",
+    "title": "장부 교환소 (S1)",
+    "items": [
+      {
+        "itemId": "ITEM_ACC_RUNNER_SEAL_RING_S1",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_LEDGER_SEAL_S1",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_ACC_RIFT_TAG_PENDANT_S1",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_LEDGER_SEAL_S1",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_WEAPON_LEDGER_DAGGER_S1",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_LEDGER_SEAL_S1",
+            "qty": 2
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_BODY_RESIDUE_COAT_S1",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_LEDGER_SEAL_S1",
+            "qty": 2
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_ACC_WARDEN_SHARD_CHARM_S1",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_LEDGER_SEAL_S1",
+            "qty": 3
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_WEAPON_BROKER_BLADE_S1",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_LEDGER_SEAL_S1",
+            "qty": 3
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_ACC_GATE_ANCHOR_SIGIL_S1",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_LEDGER_SEAL_S1",
+            "qty": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "SHOP_S1_BOSS_TROPHY_EXCHANGE",
+    "roomId": "GH_TROPHY_HALL_S1",
+    "title": "보스 트로피 교환소 (S1)",
+    "items": [
+      {
+        "itemId": "ITEM_ICON_BOSS_S1_RESIDUE_BROKER",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_TROPHY_BOSS_S1_RESIDUE_BROKER",
+            "qty": 2
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_TITLE_BOSS_S1_RESIDUE_BROKER",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_TROPHY_BOSS_S1_RESIDUE_BROKER",
+            "qty": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "SHOP_S2_BOSS_TROPHY_EXCHANGE",
+    "roomId": "R2_00",
+    "title": "보스 트로피 교환소 (S2)",
+    "items": [
+      {
+        "itemId": "ITEM_ICON_BOSS_S02",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_TROPHY_BOSS_S02",
+            "qty": 2
+          }
+        ]
+      },
+      {
+        "itemId": "ITEM_TITLE_BOSS_S02",
+        "priceGold": 0,
+        "costItems": [
+          {
+            "itemId": "ITEM_TROPHY_BOSS_S02",
+            "qty": 3
+          }
+        ]
+      }
+    ]
+  }
+]
+
+

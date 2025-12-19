@@ -1,0 +1,185 @@
+{
+  "ITEM_ACC_GATE_ANCHOR_SIGIL_S1": {
+    "name": "게이트 앵커 시길 (S1)"
+  },
+  "ITEM_ACC_RIFT_TAG_PENDANT_S1": {
+    "name": "균열 태그 펜던트 (S1)"
+  },
+  "ITEM_ACC_RUNNER_SEAL_RING_S1": {
+    "name": "러너의 인장 반지 (S1)"
+  },
+  "ITEM_ACC_WARDEN_SHARD_CHARM_S1": {
+    "name": "감시자 파편 부적 (S1)"
+  },
+  "ITEM_AMULET_HP": {
+    "name": "생명의 목걸이"
+  },
+  "ITEM_ARMOR_CHAIN": {
+    "name": "사슬 갑옷"
+  },
+  "ITEM_ARMOR_CLOTH": {
+    "name": "천 갑옷"
+  },
+  "ITEM_ARMOR_LEATHER": {
+    "name": "가죽 갑옷"
+  },
+  "ITEM_ARMOR_PLATE": {
+    "name": "판금 갑옷"
+  },
+  "ITEM_BODY_RESIDUE_COAT_S1": {
+    "name": "잔재 코트 (S1)"
+  },
+  "ITEM_ICON_BONUS_S02": {
+    "name": "보너스 아이콘(S02): 연무의 도서"
+  },
+  "ITEM_ICON_BONUS_S03": {
+    "name": "보너스 아이콘(S03): 담흑의 정원"
+  },
+  "ITEM_ICON_BONUS_S04": {
+    "name": "보너스 아이콘(S04): 적명의 탑"
+  },
+  "ITEM_ICON_BONUS_S05": {
+    "name": "보너스 아이콘(S05): 창백한 회랑"
+  },
+  "ITEM_ICON_BONUS_S06": {
+    "name": "보너스 아이콘(S06): 잊혀진 성역"
+  },
+  "ITEM_ICON_BONUS_S07": {
+    "name": "보너스 아이콘(S07): 침식된 요새"
+  },
+  "ITEM_ICON_BONUS_S08": {
+    "name": "보너스 아이콘(S08): 고요한 전장"
+  },
+  "ITEM_ICON_BONUS_S09": {
+    "name": "보너스 아이콘(S09): 왜곡의 심연"
+  },
+  "ITEM_ICON_BONUS_S1": {
+    "name": "보너스 아이콘(S1): 균열의 미광"
+  },
+  "ITEM_ICON_BONUS_S10": {
+    "name": "보너스 아이콘(S10): 결산의 관"
+  },
+  "ITEM_ICON_BOSS_S02": {
+    "name": "보스 아이콘(S2): 연무의 도서"
+  },
+  "ITEM_ICON_BOSS_S1_RESIDUE_BROKER": {
+    "name": "보스 아이콘(S1): 잔재 브로커"
+  },
+  "ITEM_LEDGER_SEAL_S1": {
+    "name": "원장 인장 (S1)"
+  },
+  "ITEM_LEDGER_STAMP_S1": {
+    "name": "원장 스탬프 (S1)"
+  },
+  "ITEM_MAT_BONE": {
+    "name": "뼈"
+  },
+  "ITEM_MAT_CLOTH": {
+    "name": "천 조각"
+  },
+  "ITEM_MAT_DRAGON_SCALE": {
+    "name": "드래곤 비늘"
+  },
+  "ITEM_MAT_ESSENCE": {
+    "name": "마력 정수"
+  },
+  "ITEM_MAT_LEATHER": {
+    "name": "가죽"
+  },
+  "ITEM_MAT_ORE_IRON": {
+    "name": "철광석"
+  },
+  "ITEM_MAT_ORE_MITHRIL": {
+    "name": "미스릴 광석"
+  },
+  "ITEM_POTION_HP_L": {
+    "name": "체력 포션(대)"
+  },
+  "ITEM_POTION_HP_M": {
+    "name": "체력 포션(중)"
+  },
+  "ITEM_POTION_HP_S": {
+    "name": "체력 포션(소)"
+  },
+  "ITEM_POTION_STAMINA": {
+    "name": "기력 회복 물약"
+  },
+  "ITEM_RING_DEX": {
+    "name": "민첩의 반지"
+  },
+  "ITEM_RING_INT": {
+    "name": "지능의 반지"
+  },
+  "ITEM_RING_STR": {
+    "name": "힘의 반지"
+  },
+  "ITEM_SCROLL_RETURN": {
+    "name": "귀환 주문서"
+  },
+  "ITEM_STAFF_MAGIC": {
+    "name": "마법 지팡이"
+  },
+  "ITEM_SWORD_IRON": {
+    "name": "철 검"
+  },
+  "ITEM_SWORD_MITHRIL": {
+    "name": "미스릴 검"
+  },
+  "ITEM_SWORD_STEEL": {
+    "name": "강철 검"
+  },
+  "ITEM_SWORD_WOOD": {
+    "name": "나무 검"
+  },
+  "ITEM_TITLE_BONUS_S02": {
+    "name": "칭호(S02): 연무의 도서 러너"
+  },
+  "ITEM_TITLE_BONUS_S03": {
+    "name": "칭호(S03): 담흑의 정원 러너"
+  },
+  "ITEM_TITLE_BONUS_S04": {
+    "name": "칭호(S04): 적명의 탑 러너"
+  },
+  "ITEM_TITLE_BONUS_S05": {
+    "name": "칭호(S05): 창백한 회랑 러너"
+  },
+  "ITEM_TITLE_BONUS_S06": {
+    "name": "칭호(S06): 잊혀진 성역 러너"
+  },
+  "ITEM_TITLE_BONUS_S07": {
+    "name": "칭호(S07): 침식된 요새 러너"
+  },
+  "ITEM_TITLE_BONUS_S08": {
+    "name": "칭호(S08): 고요한 전장 러너"
+  },
+  "ITEM_TITLE_BONUS_S09": {
+    "name": "칭호(S09): 왜곡의 심연 러너"
+  },
+  "ITEM_TITLE_BONUS_S1": {
+    "name": "칭호(S1): 보너스 위크 러너"
+  },
+  "ITEM_TITLE_BONUS_S10": {
+    "name": "칭호(S10): 결산의 관 러너"
+  },
+  "ITEM_TITLE_BOSS_S02": {
+    "name": "보스 칭호(S2): 연무의 서고 파수꾼"
+  },
+  "ITEM_TITLE_BOSS_S1_RESIDUE_BROKER": {
+    "name": "칭호(S1): 브로커 헌터"
+  },
+  "ITEM_TITLE_RUNNER_S1": {
+    "name": "칭호(S1): 시즌 러너"
+  },
+  "ITEM_TROPHY_BOSS_S02": {
+    "name": "보스 트로피(S2): 연무의 인장"
+  },
+  "ITEM_TROPHY_BOSS_S1_RESIDUE_BROKER": {
+    "name": "보스 트로피(S1): 잔재 브로커"
+  },
+  "ITEM_WEAPON_BROKER_BLADE_S1": {
+    "name": "브로커 블레이드 (S1)"
+  },
+  "ITEM_WEAPON_LEDGER_DAGGER_S1": {
+    "name": "장부 대거 (S1)"
+  }
+}

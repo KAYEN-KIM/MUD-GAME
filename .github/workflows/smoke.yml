@@ -1,0 +1,160 @@
+name: Smoke Test
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  content-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate bonus week content (idempotent)
+        run: pnpm content:gen:bonusweek
+
+      - name: Validate content integrity
+        run: pnpm content:validate
+
+      - name: Sync item catalog
+        run: pnpm catalog:sync
+
+      - name: Check for uncommitted changes
+        run: |
+          git diff --exit-code || (echo "❌ Content files were modified but not committed. Please run 'pnpm content:gen:bonusweek && pnpm catalog:sync' and commit the changes." && exit 1)
+
+  smoke:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mud
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        working-directory: apps/server
+        run: |
+          cat > .env << EOF
+          DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mud?schema=public"
+          REDIS_URL="redis://localhost:6379"
+          JWT_SECRET="test-jwt-secret-for-ci"
+          EOF
+
+      - name: Run Prisma migrations
+        working-directory: apps/server
+        run: |
+          npx prisma generate
+          npx prisma migrate deploy
+
+      - name: Run Prisma seed
+        working-directory: apps/server
+        run: npx prisma db seed
+
+      - name: Start server (TEST_MODE)
+        run: |
+          TEST_MODE=true pnpm --filter server dev &
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
+
+      - name: Wait for server to be ready
+        run: |
+          echo "서버 기동 대기 중 (/health 엔드포인트)..."
+          for i in {1..60}; do
+            if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+              echo "✅ 서버 준비 완료!"
+              curl -s http://localhost:3000/health | jq .
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "❌ 서버 기동 실패 (60초 타임아웃)"
+              exit 1
+            fi
+            echo "⏳ 대기 중... ($i/60)"
+            sleep 1
+          done
+
+      - name: Run smoke test
+        run: TEST_MODE=true pnpm smoke
+        env:
+          TEST_MODE: true
+
+      - name: Stop server
+        if: always()
+        run: |
+          echo "서버 프로세스 정리 중..."
+          if [ -n "$SERVER_PID" ]; then
+            kill $SERVER_PID 2>/dev/null || true
+            sleep 1
+            kill -9 $SERVER_PID 2>/dev/null || true
+          fi
+          # pnpm dev 프로세스도 정리
+          pkill -f "pnpm.*server.*dev" || true
+          pkill -f "nest start" || true
+          echo "✅ 서버 정리 완료"
+

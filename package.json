@@ -1,0 +1,42 @@
+{
+  "name": "mud",
+  "version": "1.0.0",
+  "private": true,
+  "description": "턴제 텍스트 MUD 게임",
+  "scripts": {
+    "dev": "pnpm --filter server dev",
+    "build": "pnpm --filter server build",
+    "test": "pnpm --filter server test",
+    "smoke": "pnpm --filter server smoke",
+    "catalog:sync": "node tools/generate_items_catalog.js",
+    "content:gen:bonusweek": "node tools/generate_bonusweek_datapack.js",
+    "content:validate": "node tools/validate_content.js",
+    "dev:manual": "powershell -ExecutionPolicy Bypass -File tools/run_manual_verify.ps1",
+    "infra:up": "cd infra && docker-compose up -d postgres redis",
+    "infra:down": "cd infra && docker-compose down",
+    "db:wait": "node tools/wait_for_postgres.mjs",
+    "server:migrate": "pnpm --filter server prisma migrate deploy",
+    "server:seed": "pnpm --filter server prisma db seed",
+    "server:dev": "pnpm --filter server start:dev",
+    "flutter:run:android": "cd mud_client && flutter run",
+    "dev:android": "pnpm infra:up && pnpm db:wait && pnpm server:migrate && pnpm server:seed && concurrently -k -n \"server,flutter\" \"pnpm server:dev\" \"pnpm flutter:run:android\"",
+    "docker:build:server": "docker build -f apps/server/Dockerfile -t mud-server:local .",
+    "prod:up": "cd infra && docker-compose -f docker-compose.yml -f docker-compose.server.yml up -d --build",
+    "prod:down": "cd infra && docker-compose -f docker-compose.yml -f docker-compose.server.yml down",
+    "prod:logs": "cd infra && docker-compose -f docker-compose.yml -f docker-compose.server.yml logs -f server",
+    "prod:migrate": "cd infra && docker-compose -f docker-compose.yml -f docker-compose.server.yml exec server npx prisma migrate deploy",
+    "prod:seed": "cd infra && docker-compose -f docker-compose.yml -f docker-compose.server.yml exec server npx prisma db seed"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "pg": "^8.13.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "ws": "^8.18.3"
+  }
+}
+
+

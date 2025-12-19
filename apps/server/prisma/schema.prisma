@@ -1,0 +1,394 @@
+// Prisma schema for MUD Game
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Channel {
+  GLOBAL
+  LOCAL
+  PARTY
+  WHISPER
+}
+
+enum LogScope {
+  SYSTEM
+  WORLD
+  COMBAT
+  CHAT
+}
+
+enum AutoPreset {
+  AGGRO
+  GUARD
+  SAVER
+  SUSTAIN
+  SUPPORT
+  RETREAT
+}
+
+enum PartySpeedMode {
+  FAST
+  TACTICAL
+}
+
+enum PartyRole {
+  LEADER
+  MEMBER
+}
+
+enum PunishmentType {
+  MUTE
+  BAN
+}
+
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String?   @unique
+  passwordHash String?
+  createdAt    DateTime  @default(now())
+  
+  characters Character[]
+  
+  @@index([email])
+}
+
+model Character {
+  id                    String    @id @default(cuid())
+  userId                String
+  name                  String    @unique
+  level                 Int       @default(1)
+  exp                   Int       @default(0)
+  hp                    Int       @default(100)
+  hpMax                 Int       @default(100)
+  stamina               Int       @default(100)
+  staminaMax            Int       @default(100)
+  str                   Int       @default(10)
+  dex                   Int       @default(10)
+  intStat               Int       @default(10)
+  gold                  Int       @default(0)
+  roomId                String
+  lastRestAt            DateTime?
+  cosmeticIconItemId    String?   // Cosmetic icon item ID (e.g., ITEM_ICON_BONUS_S1)
+  cosmeticTitleItemId   String?   // Cosmetic title item ID (e.g., ITEM_TITLE_BONUS_S1)
+  createdAt             DateTime  @default(now())
+  
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room            Room              @relation(fields: [roomId], references: [id])
+  inventory       Inventory[]
+  equipment       Equipment[]
+  partyMembers    PartyMember[]
+  questProgress   QuestProgress[]
+  chatMessages    ChatMessage[]
+  reportsCreated  Report[]          @relation("ReporterCharacter")
+  invitesSent     PartyInvite[]
+  
+  @@index([userId])
+  @@index([roomId])
+  @@index([name])
+}
+
+model Room {
+  id               String   @id
+  name             String
+  description      String   @db.Text
+  region           String
+  tags             Json?
+  zoneId           String?
+  depth            Int?
+  dangerLevel      Int?
+  recommendedLevel Int?
+  createdAt        DateTime @default(now())
+  
+  characters   Character[]
+  exitsFrom    RoomExit[]    @relation("ExitFrom")
+  exitsTo      RoomExit[]    @relation("ExitTo")
+  spawns       RoomSpawn[]
+  parties      Party[]
+  encounters   Encounter[]
+  chatMessages ChatMessage[]
+}
+
+model RoomExit {
+  id         String  @id @default(cuid())
+  fromRoomId String
+  toRoomId   String
+  label      String
+  condJson   Json?
+  minLevel   Int?
+  
+  fromRoom Room @relation("ExitFrom", fields: [fromRoomId], references: [id], onDelete: Cascade)
+  toRoom   Room @relation("ExitTo", fields: [toRoomId], references: [id], onDelete: Cascade)
+  
+  @@unique([fromRoomId, label])
+  @@index([fromRoomId])
+  @@index([toRoomId])
+}
+
+model Monster {
+  id       String @id
+  name     String
+  level    Int
+  hp       Int
+  atk      Int
+  def      Int
+  aiJson   Json?
+  
+  spawns RoomSpawn[]
+  drops  MonsterDrop[]
+}
+
+model RoomSpawn {
+  id        String @id @default(cuid())
+  roomId    String
+  monsterId String
+  weight    Int    @default(100)
+  
+  room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  monster Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  
+  @@unique([roomId, monsterId])
+  @@index([roomId])
+}
+
+model Item {
+  id          String @id
+  name        String
+  type        String // WEAPON, ARMOR, CONSUMABLE
+  rarity      String
+  slot        String? // WEAPON, HEAD, BODY, LEGS, ACCESSORY (null for consumables)
+  stackMax    Int    @default(1)
+  atk         Int    @default(0)
+  def         Int    @default(0)
+  hpBonus     Int    @default(0)
+  priceBuy    Int    @default(50)
+  priceSell   Int    @default(20)
+  effectJson  Json?
+  
+  inventory Inventory[]
+  equipment Equipment[]
+  drops     MonsterDrop[]
+}
+
+model Inventory {
+  id          String @id @default(cuid())
+  characterId String
+  itemId      String
+  qty         Int    @default(1)
+  
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([characterId, itemId])
+  @@index([characterId])
+}
+
+model Equipment {
+  id          String @id @default(cuid())
+  characterId String
+  slot        String
+  itemId      String
+  
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([characterId, slot])
+  @@index([characterId])
+}
+
+model MonsterDrop {
+  id        String @id @default(cuid())
+  monsterId String
+  itemId    String
+  minQty    Int    @default(1)
+  maxQty    Int    @default(1)
+  chanceBp  Int    @default(10000) // basis points (10000 = 100%)
+  
+  monster Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([monsterId, itemId])
+  @@index([monsterId])
+}
+
+enum QuestProgressStatus {
+  ACTIVE
+  COMPLETED
+  TURNED_IN
+}
+
+model QuestTemplate {
+  id              String @id
+  title           String
+  description     String @db.Text
+  giverRoomId     String
+  turninRoomId    String
+  minLevel        Int    @default(1)
+  repeatable      Boolean @default(false)
+  objectivesJson  Json   // [{type, target, count, zoneId?, roomId?, itemId?, bossId?}]
+  rewardsJson     Json   // {gold, exp, items:[{itemId, qty}]}
+  
+  progress QuestProgress[]
+}
+
+model QuestProgress {
+  id           String               @id @default(cuid())
+  characterId  String
+  questId      String
+  status       QuestProgressStatus  @default(ACTIVE)
+  progressJson Json?                // type별 카운터/플래그
+  acceptedAt   DateTime             @default(now())
+  completedAt  DateTime?
+  turnedInAt   DateTime?
+  
+  character Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  quest     QuestTemplate  @relation(fields: [questId], references: [id], onDelete: Cascade)
+  
+  @@unique([characterId, questId])
+  @@index([characterId])
+  @@index([questId])
+  @@index([status])
+}
+
+
+model Party {
+  id                 String          @id @default(cuid())
+  leaderCharacterId  String
+  code               String          @unique // Join code for party (6 chars)
+  roomId             String
+  speedMode          PartySpeedMode  @default(TACTICAL)
+  defaultPreset      AutoPreset      @default(AGGRO)
+  createdAt          DateTime        @default(now())
+  
+  room       Room          @relation(fields: [roomId], references: [id])
+  members    PartyMember[]
+  invites    PartyInvite[]
+  encounters Encounter[]
+  messages   ChatMessage[]
+  
+  @@index([leaderCharacterId])
+  @@index([roomId])
+  @@index([code])
+}
+
+model PartyMember {
+  id          String     @id @default(cuid())
+  partyId     String
+  characterId String
+  role        PartyRole  @default(MEMBER)
+  follow      Boolean    @default(true)
+  autoEnabled Boolean    @default(true)
+  autoPreset  AutoPreset @default(AGGRO)
+  joinedAt    DateTime   @default(now())
+  
+  party     Party     @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  @@unique([partyId, characterId])
+  @@index([partyId])
+  @@index([characterId])
+}
+
+model PartyInvite {
+  id              String       @id @default(cuid())
+  partyId         String
+  fromCharacterId String
+  toCharacterName String
+  status          InviteStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  
+  party         Party     @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  fromCharacter Character @relation(fields: [fromCharacterId], references: [id], onDelete: Cascade)
+  
+  @@index([partyId])
+  @@index([toCharacterName])
+}
+
+model Encounter {
+  id                 String   @id @default(cuid())
+  partyId            String?
+  roomId             String
+  isBoss             Boolean  @default(false)
+  turnNo             Int      @default(0)
+  turnDeadlineAt     DateTime
+  timeBankRemaining  Int      @default(1)
+  stateJson          Json
+  createdAt          DateTime @default(now())
+  
+  party Party? @relation(fields: [partyId], references: [id], onDelete: SetNull)
+  room  Room   @relation(fields: [roomId], references: [id])
+  
+  @@index([partyId])
+  @@index([roomId])
+}
+
+model ChatMessage {
+  id              String   @id @default(cuid())
+  channel         Channel
+  roomId          String?
+  partyId         String?
+  fromCharacterId String
+  toName          String?
+  text            String   @db.Text
+  createdAt       DateTime @default(now())
+  
+  fromCharacter Character @relation(fields: [fromCharacterId], references: [id], onDelete: Cascade)
+  room          Room?     @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  party         Party?    @relation(fields: [partyId], references: [id], onDelete: SetNull)
+  
+  @@index([fromCharacterId])
+  @@index([roomId])
+  @@index([partyId])
+  @@index([createdAt])
+}
+
+model Report {
+  id                    String   @id @default(cuid())
+  reporterCharacterId   String
+  targetName            String
+  reason                String   @db.Text
+  createdAt             DateTime @default(now())
+  
+  reporterCharacter Character @relation("ReporterCharacter", fields: [reporterCharacterId], references: [id], onDelete: Cascade)
+  
+  @@index([reporterCharacterId])
+  @@index([targetName])
+}
+
+model Punishment {
+  id         String          @id @default(cuid())
+  targetName String
+  type       PunishmentType
+  untilAt    DateTime?
+  note       String          @db.Text
+  createdAt  DateTime        @default(now())
+  
+  @@index([targetName])
+  @@index([type])
+}
+
+model BossKillLog {
+  id        String   @id @default(cuid())
+  roomId    String
+  bossId    String
+  killedAt  DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roomId, bossId])
+  @@index([roomId])
+}
+

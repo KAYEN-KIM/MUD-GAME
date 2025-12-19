@@ -1,0 +1,71 @@
+# Git ignore
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment files (KEEP ONLY .example files!)
+.env
+.env.local
+.env.production
+.env.prodlike
+apps/server/.env
+infra/env.prodlike
+
+# Secrets & Keys (CRITICAL: NEVER commit!)
+*.jks
+*.keystore
+**/key.properties
+**/*-key.jks
+**/*-keystore.jks
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+mud_client/android/.gradle/
+mud_client/ios/
+mud_client/macos/
+mud_client/linux/
+mud_client/windows/
+mud_client/web/
+
+# Reports (optional, can commit)
+# *_REPORT.md
+
+# Tests
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+tmp/
+temp/
+
+# Prisma
+apps/server/prisma/migrations/.migration_lock

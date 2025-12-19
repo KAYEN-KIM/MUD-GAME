@@ -1,0 +1,58 @@
+# Git
+.git
+.gitignore
+.github
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Node
+**/node_modules
+**/npm-debug.log
+**/yarn-error.log
+**/pnpm-debug.log
+
+# Build outputs
+**/dist
+**/build
+**/.next
+**/out
+
+# Dart/Flutter
+**/.dart_tool
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+mud_client/android/.gradle
+mud_client/ios
+mud_client/macos
+mud_client/linux
+mud_client/windows
+mud_client/web
+
+# Tests
+**/coverage
+**/.nyc_output
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env (보안상 제외, runtime에 주입)
+**/.env
+**/.env.local
+**/.env.production
+
+# Reports
+*_REPORT.md
+
+# Misc
+*.log
+**/.cache
+**/tmp
+**/temp
+

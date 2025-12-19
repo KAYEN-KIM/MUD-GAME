@@ -1,0 +1,118 @@
+name: Release Android Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_mode:
+        description: 'Build mode'
+        required: true
+        type: choice
+        options:
+          - debug
+          - release
+        default: 'debug'
+  push:
+    tags:
+      - 'android-v*'
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get dependencies
+        working-directory: mud_client
+        run: flutter pub get
+
+      - name: Build Debug APK
+        if: ${{ github.event.inputs.build_mode == 'debug' || github.event.inputs.build_mode == '' }}
+        working-directory: mud_client
+        run: flutter build apk --debug
+
+      - name: Build Release APK (unsigned)
+        if: ${{ github.event.inputs.build_mode == 'release' }}
+        working-directory: mud_client
+        run: |
+          echo "⚠️ Building unsigned release APK (keystore configuration needed for production)"
+          flutter build apk --release || flutter build apk --debug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mud-game-apk-${{ github.sha }}
+          path: |
+            mud_client/build/app/outputs/flutter-apk/*.apk
+          retention-days: 30
+
+      - name: Build summary
+        run: |
+          echo "### 🎮 Android Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Mode:** ${{ github.event.inputs.build_mode || 'debug' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⬇️ Download the APK from the Artifacts section above." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Note:** Release builds are unsigned. Configure keystore for production signing." >> $GITHUB_STEP_SUMMARY
+
+  build-aab:
+    name: Build Android App Bundle (AAB)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.build_mode == 'release' || startsWith(github.ref, 'refs/tags/android-v') }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        working-directory: mud_client
+        run: flutter pub get
+
+      - name: Build App Bundle (unsigned)
+        working-directory: mud_client
+        run: |
+          echo "⚠️ Building unsigned AAB (keystore configuration needed for Google Play)"
+          flutter build appbundle --release || echo "AAB build failed (expected without keystore)"
+
+      - name: Upload AAB artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mud-game-aab-${{ github.sha }}
+          path: |
+            mud_client/build/app/outputs/bundle/release/*.aab
+          retention-days: 30
+

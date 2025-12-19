@@ -1,0 +1,108 @@
+{
+  "seasons": [
+    {
+      "n": 2,
+      "theme": "연무의 도서",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 3,
+      "theme": "담흑의 정원",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 4,
+      "theme": "적명의 탑",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 5,
+      "theme": "창백한 회랑",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 6,
+      "theme": "잊혀진 성역",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 7,
+      "theme": "침식된 요새",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 8,
+      "theme": "고요한 전장",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 9,
+      "theme": "왜곡의 심연",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    },
+    {
+      "n": 10,
+      "theme": "결산의 관",
+      "zoneId": "R1",
+      "wbKill": 60,
+      "eliteKill": 200,
+      "wbGold": 800,
+      "wbExp": 550,
+      "eliteGold": 500,
+      "eliteExp": 500
+    }
+  ],
+  "defaults": {
+    "potionItemId": "ITEM_POTION_HP_S",
+    "potionQty": 5
+  }
+}
+

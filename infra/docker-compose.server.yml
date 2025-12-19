@@ -1,0 +1,30 @@
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: apps/server/Dockerfile
+    container_name: mud-server
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./env.prodlike
+    environment:
+      # Override for container network
+      DATABASE_URL: postgresql://mud:mudpass@mud-postgres:5432/mud
+      REDIS_URL: redis://mud-redis:6379
+      
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
+
+networks:
+  default:
+    name: mud-network
+
+
+

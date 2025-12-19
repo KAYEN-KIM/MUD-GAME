@@ -1,0 +1,1268 @@
+[
+  {
+    "id": "Q_PRO_001",
+    "title": "게이트로",
+    "description": "그레하벤 게이트로 가서 등록하세요.",
+    "giverRoomId": "START_TOWN",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_GATE",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 30,
+      "exp": 20,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_PRO_002",
+    "title": "시장 준비",
+    "description": "시장에서 물자를 확인하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_MARKET",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_MARKET",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 20,
+      "exp": 15,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_PRO_003",
+    "title": "첫 물자 구매",
+    "description": "시장에서 물약을 구매하세요.",
+    "giverRoomId": "GH_MARKET",
+    "turninRoomId": "GH_MARKET",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "COLLECT_ITEM",
+        "itemId": "ITEM_POTION_HP_S",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 0,
+      "exp": 20,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_PRO_004",
+    "title": "첫 샤드 진입",
+    "description": "균열 전초기지를 거쳐 R1_00에 진입하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_RIFT_OUTPOST",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "R1_00",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 40,
+      "exp": 30,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_PRO_005",
+    "title": "첫 사냥과 귀환",
+    "description": "R1에서 몬스터를 처치하고 게이트로 귀환하세요.",
+    "giverRoomId": "GH_RIFT_OUTPOST",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 1
+      },
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_GATE",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 80,
+      "exp": 60,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_001",
+    "title": "슬럼의 소문",
+    "description": "슬럼 지역을 방문하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_SLUMS",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_SLUMS",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 30,
+      "exp": 30,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S01_002",
+    "title": "시장으로 가라",
+    "description": "슬럼에서 시장으로 이동하세요.",
+    "giverRoomId": "GH_SLUMS",
+    "turninRoomId": "GH_MARKET",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_MARKET",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 30,
+      "exp": 30,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S01_003",
+    "title": "정화 의식 실습",
+    "description": "정화 키트를 획득하세요.",
+    "giverRoomId": "GH_MARKET",
+    "turninRoomId": "GH_MARKET",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "COLLECT_ITEM",
+        "itemId": "ITEM_POTION_HP_S",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 20,
+      "exp": 40,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_004",
+    "title": "첫 샤드 조사",
+    "description": "R1_00을 조사하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_RIFT_OUTPOST",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "R1_00",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 40,
+      "exp": 50,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S01_005",
+    "title": "초급 사냥 계약",
+    "description": "R1에서 몬스터 3마리를 처치하세요.",
+    "giverRoomId": "GH_RIFT_OUTPOST",
+    "turninRoomId": "GH_RIFT_OUTPOST",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 3
+      }
+    ],
+    "rewardsJson": {
+      "gold": 60,
+      "exp": 70,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_006",
+    "title": "귀환 보고",
+    "description": "게이트로 귀환하세요.",
+    "giverRoomId": "GH_RIFT_OUTPOST",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_GATE",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 40,
+      "exp": 40,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S01_007",
+    "title": "패턴 조각 수집",
+    "description": "R1에서 몬스터 5마리를 처치하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 2,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 5
+      }
+    ],
+    "rewardsJson": {
+      "gold": 90,
+      "exp": 110,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_008",
+    "title": "장부의 첫 표식",
+    "description": "장부 사무실을 방문하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 2,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_LEDGER_OFFICE",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 60,
+      "exp": 80,
+      "items": [
+        {
+          "itemId": "ITEM_LEDGER_SEAL_S1",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_D01",
+    "title": "[D] 일일 계약: R1 현상금",
+    "description": "R1에서 몬스터 12마리를 처치하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 2,
+    "repeatable": true,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 12
+      }
+    ],
+    "rewardsJson": {
+      "gold": 120,
+      "exp": 80,
+      "items": [
+        {
+          "itemId": "ITEM_LEDGER_STAMP_S1",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_D02",
+    "title": "[D] 일일 계약: 정찰 보고",
+    "description": "R1_01을 방문하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 1,
+    "repeatable": true,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "R1_01",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 80,
+      "exp": 50,
+      "items": [
+        {
+          "itemId": "ITEM_LEDGER_STAMP_S1",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_D03",
+    "title": "[D] 일일 계약: 시장 보급",
+    "description": "소형 물약을 1개 획득하세요.",
+    "giverRoomId": "GH_MARKET",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 2,
+    "repeatable": true,
+    "objectivesJson": [
+      {
+        "type": "COLLECT_ITEM",
+        "itemId": "ITEM_POTION_HP_S",
+        "count": 1
+      }
+    ],
+    "rewardsJson": {
+      "gold": 60,
+      "exp": 40,
+      "items": [
+        {
+          "itemId": "ITEM_LEDGER_STAMP_S1",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 과투입",
+    "description": "보너스 주간 선택 목표입니다. 파워 인플레는 금지됩니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 400,
+      "exp": 450,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S1",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_META_01",
+    "title": "[META] 장부 등급 I",
+    "description": "장부 스탬프(S1)를 9개 모으세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 2,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "COLLECT_ITEM",
+        "itemId": "ITEM_LEDGER_STAMP_S1",
+        "count": 9
+      }
+    ],
+    "rewardsJson": {
+      "gold": 300,
+      "exp": 200,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 3
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_META_02",
+    "title": "[META] 장부 등급 II",
+    "description": "장부 스탬프(S1)를 18개 모으세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 2,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "COLLECT_ITEM",
+        "itemId": "ITEM_LEDGER_STAMP_S1",
+        "count": 18
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 350,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_META_03",
+    "title": "[META] 장부 등급 III",
+    "description": "장부 스탬프(S1)를 30개 모으세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 3,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "COLLECT_ITEM",
+        "itemId": "ITEM_LEDGER_STAMP_S1",
+        "count": 30
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 600,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 8
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_META_04",
+    "title": "[META] 시즌 1 완주: 첫 표식",
+    "description": "장부 스탬프(S1)를 42개 모으세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_GATE",
+    "minLevel": 3,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "COLLECT_ITEM",
+        "itemId": "ITEM_LEDGER_STAMP_S1",
+        "count": 42
+      }
+    ],
+    "rewardsJson": {
+      "gold": 1200,
+      "exp": 900,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_RUNNER_S1",
+          "qty": 1
+        },
+        {
+          "itemId": "ITEM_LEDGER_SEAL_S1",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_W01",
+    "title": "[W] 주간 계약: R1 소탕",
+    "description": "R1에서 몬스터 60마리를 처치하세요.",
+    "giverRoomId": "GH_GATE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 3,
+    "repeatable": true,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 600,
+      "exp": 400,
+      "items": [
+        {
+          "itemId": "ITEM_LEDGER_SEAL_S1",
+          "qty": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S01_WB01",
+    "title": "[WB] 보너스 주간: 잔재 소탕",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 700,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S1",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S02_001",
+    "title": "[S2] 연무의 도서 — 첫 계약",
+    "description": "연무의 도서 입구(R2_00)를 방문하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 13,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "R2_00"
+      }
+    ],
+    "rewardsJson": {
+      "gold": 300,
+      "exp": 500,
+      "items": [
+        {"itemId": "ITEM_POTION_HP_S", "qty": 2}
+      ]
+    }
+  },
+  {
+    "id": "Q_S02_002",
+    "title": "[S2] 잉크의 냄새",
+    "description": "연무의 도서(R2)에서 몬스터 25마리를 처치하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 13,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R2",
+        "count": 25
+      }
+    ],
+    "rewardsJson": {
+      "gold": 400,
+      "exp": 600,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S02_003",
+    "title": "[S2] 서고의 미아",
+    "description": "필사실(R2_03)을 방문하고 R2에서 몬스터 30마리를 처치하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 14,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "R2_03"
+      },
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R2",
+        "count": 30
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 700,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S02_004",
+    "title": "[S2] 기록 오염 제거",
+    "description": "연무의 도서에서 몬스터 60마리를 처치하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 15,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R2",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 600,
+      "exp": 900,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_M",
+          "qty": 3
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S02_005",
+    "title": "[S2] 심층 접근",
+    "description": "연무의 서고 심층(R2_BOSS_TOME)으로 이동하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 16,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "R2_BOSS_TOME"
+      }
+    ],
+    "rewardsJson": {
+      "gold": 700,
+      "exp": 1000,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S02_006",
+    "title": "[S2] 보스 토벌 — 서고의 파수",
+    "description": "서고의 파수꾼을 처치하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 18,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R2",
+        "count": 1,
+        "requireBoss": true
+      }
+    ],
+    "rewardsJson": {
+      "gold": 1000,
+      "exp": 1500,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_L",
+          "qty": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S02_007",
+    "title": "[S2] 귀환 보고",
+    "description": "균열 전초기지로 돌아가 보고하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_RIFT_OUTPOST",
+    "minLevel": 18,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "VISIT_ROOM",
+        "roomId": "GH_RIFT_OUTPOST"
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 800,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S02_008",
+    "title": "[S2] 장부 기록 갱신",
+    "description": "장부 사무실에서 완료 처리하세요.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 18,
+    "repeatable": false,
+    "objectivesJson": [],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 1200,
+      "items": []
+    }
+  },
+  {
+    "id": "Q_S02_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 연무의 도서",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S02",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S02_WB01",
+    "title": "[WB] 보너스 주간: 연무의 도서",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S02",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S03_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 담흑의 정원",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S03",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S03_WB01",
+    "title": "[WB] 보너스 주간: 담흑의 정원",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S03",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S04_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 적명의 탑",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S04",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S04_WB01",
+    "title": "[WB] 보너스 주간: 적명의 탑",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S04",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S05_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 창백한 회랑",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S05",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S05_WB01",
+    "title": "[WB] 보너스 주간: 창백한 회랑",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S05",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S06_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 잊혀진 성역",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S06",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S06_WB01",
+    "title": "[WB] 보너스 주간: 잊혀진 성역",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S06",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S07_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 침식된 요새",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S07",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S07_WB01",
+    "title": "[WB] 보너스 주간: 침식된 요새",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S07",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S08_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 고요한 전장",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S08",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S08_WB01",
+    "title": "[WB] 보너스 주간: 고요한 전장",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S08",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S09_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 왜곡의 심연",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S09",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S09_WB01",
+    "title": "[WB] 보너스 주간: 왜곡의 심연",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S09",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S10_ELITE_01",
+    "title": "[ELITE] 보너스 주간: 결산의 관",
+    "description": "보너스 주간 선택 목표. 파워 인플레는 금지된다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 200
+      }
+    ],
+    "rewardsJson": {
+      "gold": 500,
+      "exp": 500,
+      "items": [
+        {
+          "itemId": "ITEM_TITLE_BONUS_S10",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "Q_S10_WB01",
+    "title": "[WB] 보너스 주간: 결산의 관",
+    "description": "보너스 주간 전용 퀘스트입니다. 인장은 지급되지 않습니다.",
+    "giverRoomId": "GH_LEDGER_OFFICE",
+    "turninRoomId": "GH_LEDGER_OFFICE",
+    "minLevel": 1,
+    "repeatable": false,
+    "objectivesJson": [
+      {
+        "type": "KILL_IN_ZONE",
+        "zoneId": "R1",
+        "count": 60
+      }
+    ],
+    "rewardsJson": {
+      "gold": 800,
+      "exp": 550,
+      "items": [
+        {
+          "itemId": "ITEM_POTION_HP_S",
+          "qty": 5
+        },
+        {
+          "itemId": "ITEM_ICON_BONUS_S10",
+          "qty": 1
+        }
+      ]
+    }
+  }
+]
