@@ -98,6 +98,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma Client
+        working-directory: apps/server
+        run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mud?schema=public
+
       - name: Create .env file
         working-directory: apps/server
         run: |
@@ -109,9 +115,7 @@ jobs:
 
       - name: Run Prisma migrations
         working-directory: apps/server
-        run: |
-          npx prisma generate
-          npx prisma migrate deploy
+        run: npx prisma migrate deploy
 
       - name: Run Prisma seed
         working-directory: apps/server
