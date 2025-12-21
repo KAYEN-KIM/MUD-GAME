@@ -49,5 +49,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   async expire(key: string, seconds: number): Promise<void> {
     await this.client.expire(key, seconds);
   }
+
+  async ping(): Promise<string> {
+    return this.client.ping();
+  }
 }
 
