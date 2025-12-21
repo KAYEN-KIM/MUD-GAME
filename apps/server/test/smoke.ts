@@ -509,14 +509,30 @@ class SmokeTest {
     console.log('[8] HUNT → COMBAT 테스트...');
     
     // 파티 생성 (이미 있으면 실패해도 OK)
-    this.send('PARTY_CREATE', {});
-    await this.sleep(500);
+    const partyCreateReqId = this.send('PARTY_CREATE', {});
+    
+    // 파티 생성 에러 확인 (이미 파티가 있으면 에러 가능)
+    const partyError = await this.waitForError(partyCreateReqId, 2000);
+    
+    if (partyError) {
+      console.log('  ⚠️  파티 생성 에러 (이미 파티가 있을 수 있음):', partyError.p?.message || '알 수 없음');
+    } else {
+      console.log('  ✓ 파티 생성 성공 (또는 이미 파티 존재)');
+    }
+    
+    // STATE_SYNC 대기 (파티 생성 후 상태 동기화)
+    await this.sleep(1000);
 
     // HUNT 시작
-    this.send('HUNT', {});
+    const huntReqId = this.send('HUNT', {});
     
-    const encounterStart = await this.waitForMessage('ENCOUNTER_START', 5000);
+    const encounterStart = await this.waitForMessage('ENCOUNTER_START', 5000, huntReqId);
     if (!encounterStart) {
+      // HUNT 에러도 확인
+      const huntError = await this.waitForError(huntReqId, 100);
+      if (huntError) {
+        throw new Error(`HUNT 실패: ${huntError.p?.message || '알 수 없음'}`);
+      }
       throw new Error('ENCOUNTER_START 수신 실패');
     }
 
