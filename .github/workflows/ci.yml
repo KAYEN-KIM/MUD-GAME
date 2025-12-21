@@ -67,7 +67,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm --filter server prisma generate
+        working-directory: apps/server
+        run: npx prisma generate
         env:
           DATABASE_URL: postgresql://mud:mudpass@localhost:5432/mud
 
