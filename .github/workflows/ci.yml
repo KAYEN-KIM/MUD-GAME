@@ -66,18 +66,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          set +e
-          pnpm install --frozen-lockfile
-          EXIT_CODE=$?
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo "⚠️ frozen-lockfile failed (exit code: $EXIT_CODE), trying without it..."
-            pnpm install --no-frozen-lockfile
-            if [ $? -ne 0 ]; then
-              echo "❌ pnpm install failed even without frozen-lockfile"
-              exit 1
-            fi
-          fi
-          set -e
+          pnpm install --no-frozen-lockfile || pnpm install
 
       - name: Generate Prisma Client
         working-directory: apps/server
