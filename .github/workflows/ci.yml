@@ -78,12 +78,14 @@ jobs:
           DATABASE_URL: postgresql://mud:mudpass@localhost:5432/mud
 
       - name: Prisma migrate deploy
-        run: pnpm --filter server prisma migrate deploy
+        working-directory: apps/server
+        run: npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://mud:mudpass@localhost:5432/mud
 
       - name: Prisma seed
-        run: pnpm --filter server prisma db seed
+        working-directory: apps/server
+        run: npx prisma db seed
         env:
           DATABASE_URL: postgresql://mud:mudpass@localhost:5432/mud
 
