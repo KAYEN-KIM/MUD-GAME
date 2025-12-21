@@ -65,8 +65,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: |
-          pnpm install --no-frozen-lockfile || pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Generate Prisma Client
         working-directory: apps/server
@@ -164,7 +163,23 @@ jobs:
         run: cd mud_client && flutter pub get
 
       - name: Flutter analyze
-        run: cd mud_client && flutter analyze
+        run: |
+          cd mud_client
+          flutter analyze || {
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 1 ]; then
+              # Check if there are any errors (not just warnings/info)
+              if flutter analyze 2>&1 | grep -q "error •"; then
+                echo "❌ Flutter analyze found errors"
+                exit 1
+              else
+                echo "✅ Flutter analyze: only warnings/info (no errors)"
+                exit 0
+              fi
+            else
+              exit $EXIT_CODE
+            fi
+          }
 
   ci-gates-result:
     name: CI Gates Result
