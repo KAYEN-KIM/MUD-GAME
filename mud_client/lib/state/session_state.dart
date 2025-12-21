@@ -817,28 +817,34 @@ class SessionState extends ChangeNotifier {
       gameState.inventory = [];
     }
     
-    final existingItem = gameState.inventory!.firstWhere(
-      (item) => item.itemId == itemId,
-      orElse: () => InventoryItem(itemId: itemId, qty: 0, itemName: null),
-    );
+    final existingIndex = gameState.inventory!.indexWhere((item) => item.itemId == itemId);
     
-    if (existingItem.qty == 0) {
-      // 새 아이템
+    if (existingIndex >= 0) {
+      // 기존 아이템 수량 증가
+      final existingItem = gameState.inventory![existingIndex];
+      gameState.inventory![existingIndex] = InventoryItem(
+        itemId: existingItem.itemId,
+        name: existingItem.name,
+        type: existingItem.type,
+        slot: existingItem.slot,
+        qty: existingItem.qty + qty,
+        atk: existingItem.atk,
+        def: existingItem.def,
+        hpBonus: existingItem.hpBonus,
+        priceSell: existingItem.priceSell,
+      );
+    } else {
+      // 새 아이템 - 기본값으로 생성 (서버에서 STATE_SYNC로 정확한 정보가 올 예정)
       gameState.inventory!.add(InventoryItem(
         itemId: itemId,
+        name: itemId, // 기본값: itemId를 name으로 사용 (서버에서 업데이트될 예정)
+        type: 'ITEM',
         qty: qty,
-        itemName: gameState.getItemName(itemId),
+        atk: 0,
+        def: 0,
+        hpBonus: 0,
+        priceSell: 0,
       ));
-    } else {
-      // 기존 아이템 수량 증가
-      final index = gameState.inventory!.indexWhere((item) => item.itemId == itemId);
-      if (index >= 0) {
-        gameState.inventory![index] = InventoryItem(
-          itemId: existingItem.itemId,
-          qty: existingItem.qty + qty,
-          itemName: existingItem.itemName,
-        );
-      }
     }
     
     notifyListeners();
@@ -860,8 +866,14 @@ class SessionState extends ChangeNotifier {
         // 수량 차감
         gameState.inventory![index] = InventoryItem(
           itemId: currentItem.itemId,
+          name: currentItem.name,
+          type: currentItem.type,
+          slot: currentItem.slot,
           qty: newQty,
-          itemName: currentItem.itemName,
+          atk: currentItem.atk,
+          def: currentItem.def,
+          hpBonus: currentItem.hpBonus,
+          priceSell: currentItem.priceSell,
         );
       }
       
