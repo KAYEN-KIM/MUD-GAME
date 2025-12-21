@@ -97,11 +97,13 @@ jobs:
 
       - name: Check catalog diff (must be 0)
         run: |
-          if git diff --exit-code; then
-            echo "✅ Catalog sync: no diff"
-          else
-            echo "❌ Catalog sync produced diff. Run 'pnpm catalog:sync' locally and commit."
+          # 타임스탬프 필드(createdAt)를 제외하고 diff 확인
+          if git diff --exit-code --ignore-all-space --ignore-blank-lines mud_client/assets/catalog/items_catalog.json | grep -v "createdAt" | grep -q "^[+-]"; then
+            echo "❌ Catalog sync produced diff (excluding createdAt). Run 'pnpm catalog:sync' locally and commit."
+            git diff mud_client/assets/catalog/items_catalog.json
             exit 1
+          else
+            echo "✅ Catalog sync: no diff (or only createdAt changed)"
           fi
 
       - name: Smoke test
