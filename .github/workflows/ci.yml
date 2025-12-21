@@ -65,7 +65,11 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
+        run: |
+          if ! pnpm install --frozen-lockfile; then
+            echo "⚠️ frozen-lockfile failed, trying without it..."
+            pnpm install --no-frozen-lockfile
+          fi
 
       - name: Generate Prisma Client
         working-directory: apps/server
@@ -107,12 +111,51 @@ jobs:
             echo "✅ Catalog sync: no diff (or only createdAt changed)"
           fi
 
+      - name: Build server
+        working-directory: apps/server
+        run: pnpm build
+        env:
+          DATABASE_URL: postgresql://mud:mudpass@localhost:5432/mud
+          REDIS_URL: redis://localhost:6379
+
+      - name: Start server in background
+        working-directory: apps/server
+        run: |
+          pnpm start &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          echo "Waiting for server to start..."
+          sleep 5
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+              echo "✅ Server is ready!"
+              break
+            fi
+            echo "⏳ Waiting for server... ($i/30)"
+            sleep 2
+          done
+        env:
+          DATABASE_URL: postgresql://mud:mudpass@localhost:5432/mud
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-jwt-secret-for-ci
+          ADMIN_KEY: test-admin-key-for-ci
+          TEST_MODE: "true"
+          MAX_UNLOCKED_SEASON: "99"
+
       - name: Smoke test
         run: pnpm --filter server smoke
         env:
           TEST_MODE: "true"
           DATABASE_URL: postgresql://mud:mudpass@localhost:5432/mud
           REDIS_URL: redis://localhost:6379
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -n "$SERVER_PID" ]; then
+            kill $SERVER_PID || true
+          fi
+          pkill -f "node.*dist/main" || true
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
