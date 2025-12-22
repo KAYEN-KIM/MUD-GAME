@@ -12,12 +12,14 @@ import { AuthService } from '../auth/auth.service';
 import { WorldService } from '../world/world.service';
 import { PartyService } from '../party/party.service';
 import { CombatService } from '../combat/combat.service';
+import { CombatTickService } from '../combat-tick/combat-tick.service';
 import { ChatService } from '../chat/chat.service';
 import { QuestService } from '../quest/quest.service';
 import { ShopService } from '../shop/shop.service';
 import { SeasonService } from '../season/season.service';
 import { BossService } from '../boss/boss.service';
 import { PrismaService } from '../../common/prisma.service';
+import { RedisService } from '../../common/redis.service';
 import { WSMessage, LogAppendPayload, StateSyncPayload, ErrorPayload } from './dto';
 import { getMaxUnlockedSeason, isUnlockedId } from '../../utils/season_lock';
 
@@ -34,19 +36,52 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private clients = new Map<WSClient, { userId?: string; characterId?: string }>();
   private encounterTimers = new Map<string, NodeJS.Timeout>();
   private questTrackThrottle = new Map<string, { lastSentAtMs: number; lastHash: string }>();
+  private redisSubscriber: any;
 
   constructor(
     private readonly authService: AuthService,
     private readonly worldService: WorldService,
     private readonly partyService: PartyService,
     private readonly combatService: CombatService,
+    private readonly combatTickService: CombatTickService,
     private readonly chatService: ChatService,
     private readonly questService: QuestService,
     private readonly shopService: ShopService,
     private readonly seasonService: SeasonService,
     private readonly bossService: BossService,
     private readonly prisma: PrismaService,
-  ) {}
+    private readonly redis: RedisService,
+  ) {
+    // Subscribe to combat tick events from Redis
+    this.setupRedisSubscription();
+  }
+
+  private setupRedisSubscription() {
+    // Create a separate Redis client for subscription
+    this.redisSubscriber = this.redis.getClient().duplicate();
+    
+    this.redisSubscriber.psubscribe('combat:tick:*', (err: any) => {
+      if (err) {
+        console.error('[WsGateway] Failed to subscribe to combat:tick:*', err);
+      } else {
+        console.log('[WsGateway] Subscribed to combat:tick:* events');
+      }
+    });
+
+    this.redisSubscriber.on('pmessage', async (pattern: string, channel: string, message: string) => {
+      try {
+        const roomId = channel.replace('combat:tick:', '');
+        const tickResult = JSON.parse(message);
+        await this.broadcastToRoom(roomId, {
+          t: 'COMBAT_TICK',
+          ts: Date.now(),
+          p: tickResult,
+        });
+      } catch (error) {
+        console.error('[WsGateway] Error handling combat tick event:', error);
+      }
+    });
+  }
 
   handleConnection(client: WSClient) {
     console.log('✅ WebSocket 연결됨');
@@ -92,6 +127,13 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           break;
         case 'HUNT':
           await this.handleHunt(client, message);
+          break;
+        case 'ATTACK':
+        case 'KILL':
+          await this.handleAttack(client, message);
+          break;
+        case 'FLEE':
+          await this.handleFlee(client, message);
           break;
         case 'PARTY_CREATE':
           await this.handlePartyCreate(client, message);
@@ -502,7 +544,7 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!clientData?.characterId) return;
 
     await this.combatService.useTimeBank(encounterId, clientData.characterId);
-    this.sendLog(client, 'COMBAT', '타임뱅크 사용 (+6초)');
+    this.sendLog(client, 'COMBAT', '타임뱅크 사용 (+3초)');
   }
 
   private async handleChatSend(client: WSClient, message: WSMessage) {
@@ -744,7 +786,9 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const now = Date.now();
     const deadline = encounter.turnDeadlineAt.getTime();
-    const delay = Math.max(0, deadline - now) + 150;
+    // delay 계산: deadline까지 남은 시간 (최소 0ms)
+    const delay = Math.max(0, deadline - now);
+    console.log(`[scheduleEncounter] encounterId=${encounterId.substring(0, 8)}, now=${now}, deadline=${deadline}, delay=${delay}ms, turnNo=${encounter.turnNo}`);
 
     const timer = setTimeout(async () => {
       try {
@@ -828,7 +872,8 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (result.result) {
           this.encounterTimers.delete(encounterId);
         } else {
-          // 다음 턴 스케줄링
+          // 다음 턴 스케줄링 (즉시, resolveTurn에서 이미 turnDeadlineAt이 설정됨)
+          // resolveTurn이 실행되는 동안 시간이 지났을 수 있으므로 즉시 스케줄링
           await this.scheduleEncounter(encounterId);
         }
       } catch (error) {
@@ -1670,6 +1715,148 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.sendError(client, message.reqId, 'PARTY_INFO_FAILED', error.message || '파티 정보 조회 실패');
     }
   }
+
+  // ===== TICK-BASED COMBAT HANDLERS =====
+
+  private async handleAttack(client: WSClient, message: WSMessage) {
+    const clientData = this.clients.get(client);
+    if (!clientData?.characterId) return;
+
+    const { target } = message.p;
+
+    if (!target) {
+      this.sendError(client, message.reqId, 'INVALID_STATE', 'Target required (monsterId)');
+      return;
+    }
+
+    try {
+      const character = await this.prisma.character.findUnique({
+        where: { id: clientData.characterId },
+      });
+
+      if (!character) {
+        throw new Error('Character not found');
+      }
+
+      // Check if target monster exists in room
+      const roomSpawn = await this.prisma.roomSpawn.findFirst({
+        where: {
+          roomId: character.roomId,
+          monsterId: target,
+        },
+        include: { monster: true },
+      });
+
+      if (!roomSpawn) {
+        throw new Error('Target monster not found in this room');
+      }
+
+      // Ensure combat instance
+      const instance = await this.combatTickService.ensureInstanceForRoom(character.roomId);
+
+      // Ensure combatants
+      const { playerCombatant, monsterCombatant } =
+        await this.combatTickService.ensureCombatants(instance.id, clientData.characterId, target);
+
+      // Enqueue attack action
+      await this.combatTickService.enqueueAction({
+        combatantId: playerCombatant.id,
+        instanceId: instance.id,
+        type: 'ATTACK',
+        payload: { targetId: monsterCombatant.id },
+        reqId: message.reqId || `attack_${Date.now()}`,
+      });
+
+      // Send ACK
+      this.sendMessage(client, {
+        t: 'ATTACK_ACK',
+        reqId: message.reqId,
+        ts: Date.now(),
+        p: { accepted: true, instanceId: instance.id },
+      });
+
+      this.sendLog(client, 'COMBAT', `You engage ${roomSpawn.monster.name} in combat!`);
+    } catch (error: any) {
+      this.sendError(client, message.reqId, 'ATTACK_FAILED', error.message || 'Attack failed');
+    }
+  }
+
+  private async handleFlee(client: WSClient, message: WSMessage) {
+    const clientData = this.clients.get(client);
+    if (!clientData?.characterId) return;
+
+    try {
+      const character = await this.prisma.character.findUnique({
+        where: { id: clientData.characterId },
+      });
+
+      if (!character) {
+        throw new Error('Character not found');
+      }
+
+      // Find active combat instance
+      const instance = await this.prisma.combatInstance.findFirst({
+        where: {
+          roomId: character.roomId,
+          state: { in: ['ENGAGED', 'RESOLVING'] },
+        },
+        include: {
+          combatants: true,
+        },
+      });
+
+      if (!instance) {
+        throw new Error('Not in combat');
+      }
+
+      const playerCombatant = instance.combatants.find(
+        (c) => c.entityType === 'PLAYER' && c.entityId === clientData.characterId,
+      );
+
+      if (!playerCombatant) {
+        throw new Error('Not a combatant in this battle');
+      }
+
+      // Enqueue flee action
+      await this.combatTickService.enqueueAction({
+        combatantId: playerCombatant.id,
+        instanceId: instance.id,
+        type: 'FLEE',
+        payload: {},
+        reqId: message.reqId || `flee_${Date.now()}`,
+      });
+
+      // Send ACK
+      this.sendMessage(client, {
+        t: 'FLEE_ACK',
+        reqId: message.reqId,
+        ts: Date.now(),
+        p: { accepted: true },
+      });
+
+      this.sendLog(client, 'COMBAT', 'You attempt to flee...');
+    } catch (error: any) {
+      this.sendError(client, message.reqId, 'FLEE_FAILED', error.message || 'Flee failed');
+    }
+  }
+
+  private async broadcastToRoom(roomId: string, message: any) {
+    // Find all clients in this room
+    const charactersInRoom = await this.prisma.character.findMany({
+      where: { roomId },
+      select: { id: true },
+    });
+
+    const characterIds = new Set(charactersInRoom.map((c) => c.id));
+
+    for (const [client, data] of this.clients.entries()) {
+      if (data.characterId && characterIds.has(data.characterId)) {
+        this.sendMessage(client, message);
+      }
+    }
+  }
+
+  // ===== END TICK-BASED COMBAT HANDLERS =====
 
   private async handleUseItem(client: WSClient, message: WSMessage) {
     const clientData = this.clients.get(client);

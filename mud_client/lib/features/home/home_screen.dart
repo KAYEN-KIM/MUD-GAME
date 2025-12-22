@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../state/session_state.dart';
 import '../../core/models.dart';
+import '../../core/room_names.dart';
 import '../../services/item_catalog.dart';
 import '../auth/auth_screen.dart';
 import '../settings/settings_screen.dart';
@@ -20,7 +21,42 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MUD Client'),
+        title: Row(
+          children: [
+            const Text('MUD Client'),
+            const SizedBox(width: 8),
+            Consumer<SessionState>(
+              builder: (context, session, _) {
+                final connStatus = session.connectionStatus;
+                Color statusColor = Colors.grey;
+                IconData statusIcon = Icons.link_off;
+                switch (connStatus) {
+                  case ConnectionStatus.connecting:
+                    statusColor = Colors.orange;
+                    statusIcon = Icons.sync;
+                    break;
+                  case ConnectionStatus.connected:
+                    statusColor = Colors.green;
+                    statusIcon = Icons.link;
+                    break;
+                  case ConnectionStatus.disconnected:
+                    statusColor = Colors.red;
+                    statusIcon = Icons.link_off;
+                    break;
+                  case ConnectionStatus.reconnecting:
+                    statusColor = Colors.amber;
+                    statusIcon = Icons.sync;
+                    break;
+                }
+                return Icon(
+                  statusIcon,
+                  size: 16,
+                  color: statusColor,
+                );
+              },
+            ),
+          ],
+        ),
         actions: [
           Consumer<SessionState>(
             builder: (context, session, _) {
@@ -159,8 +195,9 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
+      body: SafeArea(
+        child: Column(
+          children: [
           // 사망 배너 (최우선)
           Consumer<SessionState>(
             builder: (context, session, _) {
@@ -237,29 +274,6 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 연결 상태
-                    Row(
-                      children: [
-                        Icon(
-                          connStatus == ConnectionStatus.connected
-                              ? Icons.link
-                              : Icons.link_off,
-                          size: 14,
-                          color: statusColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          session.connectionStatusText,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontFamily: 'monospace',
-                            color: statusColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
                     // 캐릭터 정보
                     Row(
                       children: [
@@ -363,110 +377,71 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(height: 4),
                         ],
                       ),
-                    // 현재 방
-                    Text(
-                      '현재 방: ${gs.roomId ?? "(미확인)"}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontFamily: 'monospace',
-                        color: Colors.blue[700],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // 방향 이동 패널 (dir 기반 하이브리드)
+                    // 방향 이동 패널 (dir 기반 하이브리드) - 방향 이동이 있을 때만 표시
                     _buildDirectionalMovementPanel(session),
-                    // 출구 이동 패널 (항상 표시)
-                    const SizedBox(height: 8),
+                    // 출구 이동 패널 (작게, 현재 방 정보 포함)
+                    const SizedBox(height: 4),
                     Container(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                       decoration: BoxDecoration(
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: Colors.blue[200]!),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Row(
-                              children: [
-                                Icon(Icons.place, size: 14, color: Colors.blue[800]),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '출구 이동',
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    fontFamily: 'monospace',
-                                    color: Colors.blue[800],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                          Icon(Icons.place, size: 12, color: Colors.blue[800]),
+                          const SizedBox(width: 4),
+                          Text(
+                            '현재: ${gs.roomId != null ? RoomNames.getName(gs.roomId!) : "(미확인)"}',
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontFamily: 'monospace',
+                              color: Colors.blue[800],
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          if (session.gameState.exits != null && session.gameState.exits!.isNotEmpty)
-                            SingleChildScrollView(
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
                               child: Wrap(
-                                spacing: 6,
-                                runSpacing: 6,
-                                children: session.gameState.exits!.map((exit) {
+                                spacing: 4,
+                                runSpacing: 4,
+                                children: (session.gameState.exits ?? []).map((exit) {
                                   final isLocked = session.isMoveLocked;
                                   final trimmedLabel = exit.label.trim();
                                   return ActionChip(
-                                    label: Text(trimmedLabel, style: const TextStyle(fontSize: 11)),
+                                    label: Text(trimmedLabel, style: const TextStyle(fontSize: 8)),
                                     onPressed: isLocked ? null : () => session.moveByRoomId(exit.toRoomId),
                                     backgroundColor: isLocked ? Colors.grey[300] : Colors.blue[100],
                                     disabledColor: Colors.grey[300],
                                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
+                                    labelPadding: const EdgeInsets.symmetric(horizontal: 2),
                                   );
                                 }).toList(),
                               ),
-                            )
-                          else
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              child: Text(
-                                '출구 정보 없음 (STATE_SYNC 확인)',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontFamily: 'monospace',
-                                  color: Colors.grey[600],
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
                             ),
+                          ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'REST: ${session.restUrl ?? "미설정"} | WS: ${session.wsUrl ?? "미설정"}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontFamily: 'monospace',
-                        color: Colors.grey[600],
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               );
             },
           ),
-          // 퀘스트 미니 트래커
+          // 퀘스트 미니 트래커 (접을 수 있음)
           const QuestMiniTracker(),
-          // 로그 뷰
-          const Expanded(
+          // 로그 뷰 (남은 공간 모두 사용)
+          Expanded(
             child: LogView(),
           ),
           // 액션 바
           const ActionBar(),
         ],
+        ),
       ),
     );
   }
@@ -543,45 +518,8 @@ class HomeScreen extends StatelessWidget {
     );
     
     if (!hasDirectionalExit) {
-      // 방향 이동을 지원하지 않는 방
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Colors.grey[300]!),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.explore_off, size: 14, color: Colors.grey[600]),
-                const SizedBox(width: 4),
-                Text(
-                  '방향 이동',
-                  style: TextStyle(
-                    fontSize: 9,
-                    fontFamily: 'monospace',
-                    color: Colors.grey[700],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '이 지역은 방향 이동을 지원하지 않습니다. 아래 출구에서 선택하세요.',
-              style: TextStyle(
-                fontSize: 8,
-                fontFamily: 'monospace',
-                color: Colors.grey[600],
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
-      );
+      // 방향 이동을 지원하지 않는 방 - 아무것도 표시하지 않음
+      return const SizedBox.shrink();
     }
     
     // 방향 이동을 지원하는 방
@@ -640,8 +578,8 @@ class HomeScreen extends StatelessWidget {
                 final labelText = '$dir · $dirKo ($exitLabelText)';
                 
                 return ActionChip(
-                  avatar: Icon(_getDirectionIcon(dir), size: 14),
-                  label: Text(labelText, style: const TextStyle(fontSize: 10)),
+                  avatar: Icon(_getDirectionIcon(dir), size: 12),
+                  label: Text(labelText, style: const TextStyle(fontSize: 9)),
                   onPressed: (isLocked || !hasExit) 
                     ? null 
                     : () => session.moveByRoomId(exit!.toRoomId),
@@ -650,6 +588,8 @@ class HomeScreen extends StatelessWidget {
                     : Colors.green[100],
                   disabledColor: Colors.grey[300],
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 4),
                 );
               }).toList(),
             ),

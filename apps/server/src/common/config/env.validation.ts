@@ -55,7 +55,7 @@ class EnvironmentVariables {
 
   @IsNumber()
   @Min(1)
-  TURN_SEC_FAST: number = 6;
+  TURN_SEC_FAST: number = 3;
 
   @IsNumber()
   @Min(1)
@@ -68,6 +68,23 @@ class EnvironmentVariables {
   @IsNumber()
   @Min(0)
   TIMEBANK_PER_ENCOUNTER: number = 1;
+
+  // Tick-based Combat System
+  @IsNumber()
+  @Min(500)
+  COMBAT_TICK_MS: number = 2000;
+
+  @IsNumber()
+  @Min(500)
+  COMBAT_AUTOSWING_MS: number = 2000;
+
+  @IsNumber()
+  @Min(500)
+  COMBAT_ROUNDTIME_MS: number = 2000;
+
+  @IsNumber()
+  @Min(250)
+  COMBAT_TICK_POLL_MS: number = 250;
 
   // Season Policy (Production Default: S1 Only)
   @IsNumber()

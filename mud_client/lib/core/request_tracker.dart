@@ -146,8 +146,15 @@ class ShopBuyResult {
   }
 
   static Map<String, int> _parseCost(dynamic cost) {
+    if (cost == null) return {};
     if (cost is Map) {
-      return cost.map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      final result = <String, int>{};
+      // cost는 {gold: number, costItems: array} 형태일 수 있음
+      if (cost.containsKey('gold')) {
+        result['gold'] = (cost['gold'] as num?)?.toInt() ?? 0;
+      }
+      // costItems는 배열이므로 별도 처리하지 않음 (서버에서 이미 처리됨)
+      return result;
     }
     return {};
   }

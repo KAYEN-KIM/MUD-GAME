@@ -24,6 +24,9 @@ dependencies:
   
   # UI
   cupertino_icons: ^1.0.6
+  
+  # Network Info
+  network_info_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:

@@ -54,7 +54,7 @@ export class CombatService {
       throw new Error('몬스터를 찾을 수 없습니다.');
     }
 
-    const turnSeconds = party.speedMode === 'FAST' ? 6 : 9;
+    const turnSeconds = party.speedMode === 'FAST' ? 3 : 9;
     const turnDeadlineAt = addSeconds(new Date(), turnSeconds);
 
     const encounter = await this.prisma.encounter.create({
@@ -134,7 +134,7 @@ export class CombatService {
       throw new Error('타임뱅크를 모두 사용했습니다.');
     }
 
-    const newDeadline = addSeconds(encounter.turnDeadlineAt, 6);
+    const newDeadline = addSeconds(encounter.turnDeadlineAt, 3);
 
     await this.prisma.encounter.update({
       where: { id: encounterId },
@@ -383,8 +383,10 @@ export class CombatService {
       }
 
       // 7. 다음 턴 준비
-      const turnSeconds = encounter.party.speedMode === 'FAST' ? 6 : 9;
-      const newDeadline = addSeconds(new Date(), turnSeconds);
+      const turnSeconds = encounter.party.speedMode === 'FAST' ? 3 : 9;
+      const now = new Date();
+      const newDeadline = addSeconds(now, turnSeconds);
+      console.log(`[resolveTurn] encounterId=${encounterId.substring(0, 8)}, speedMode=${encounter.party.speedMode}, turnSeconds=${turnSeconds}, now=${now.getTime()}, newDeadline=${newDeadline.getTime()}`);
 
       // 행동 초기화
       for (const participant of state.party) {

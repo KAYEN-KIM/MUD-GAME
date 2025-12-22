@@ -44,24 +44,24 @@ class LogView extends StatelessWidget {
                 '${log.timestamp.second.toString().padLeft(2, '0')}';
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     timeStr,
                     style: const TextStyle(
-                      fontSize: 10,
+                      fontSize: 9,
                       color: Colors.grey,
                       fontFamily: 'monospace',
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       log.content,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         color: _getColorForType(log.type),
                         fontFamily: 'monospace',
                       ),

@@ -41,6 +41,7 @@ export class PartyService {
         leaderCharacterId: characterId,
         code: code,
         roomId: character.roomId,
+        speedMode: 'FAST', // 기본값을 FAST로 설정 (3초 턴 간격)
         members: {
           create: {
             characterId,

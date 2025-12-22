@@ -8,6 +8,7 @@ import '../core/storage.dart';
 import '../core/ws_client.dart';
 import '../core/api_client.dart';
 import '../core/request_tracker.dart';
+import '../core/endpoints.dart';
 
 enum ConnectionStatus {
   disconnected,
@@ -129,6 +130,31 @@ class SessionState extends ChangeNotifier {
     _wsUrl = await Storage.getWsUrl();
     _token = await Storage.getToken();
     _developerMode = await Storage.getDeveloperMode();
+    
+    // URL이 없으면 자동 감지 시도 (Android 실제 기기용)
+    if (_restUrl == null || _wsUrl == null) {
+      try {
+        final detectedRestUrl = await Endpoints.getAutoDetectedRestUrl();
+        final detectedWsUrl = await Endpoints.getAutoDetectedWsUrl();
+        
+        if (detectedRestUrl != null && detectedWsUrl != null) {
+          _restUrl = detectedRestUrl;
+          _wsUrl = detectedWsUrl;
+          // 감지된 URL 저장
+          await Storage.saveRestUrl(_restUrl!);
+          await Storage.saveWsUrl(_wsUrl!);
+        } else {
+          // 자동 감지 실패 시 기본값 사용
+          _restUrl = Endpoints.getDefaultRestUrl();
+          _wsUrl = Endpoints.getDefaultWsUrl();
+        }
+      } catch (e) {
+        // 자동 감지 실패 시 기본값 사용
+        _restUrl = Endpoints.getDefaultRestUrl();
+        _wsUrl = Endpoints.getDefaultWsUrl();
+      }
+    }
+    
     notifyListeners();
   }
   
@@ -168,7 +194,13 @@ class SessionState extends ChangeNotifier {
   }
   
   Future<void> register(String email, String password, String characterName) async {
-    if (_restUrl == null) throw Exception('REST URL이 설정되지 않았습니다.');
+    if (_restUrl == null) {
+      print('[SessionState] REST URL이 설정되지 않았습니다.');
+      throw Exception('REST URL이 설정되지 않았습니다. 설정 화면에서 서버 주소를 입력하세요.');
+    }
+    
+    print('[SessionState] Register 시작');
+    print('[SessionState] REST URL: $_restUrl');
     
     final client = ApiClient(_restUrl!);
     final result = await client.register(
@@ -355,7 +387,21 @@ class SessionState extends ChangeNotifier {
         break;
       case 'ERROR':
         final errorMsg = message.p['message'] as String? ?? '알 수 없는 오류';
-        addLog('❌ $errorMsg', 'ERROR');
+        final errorCode = message.p['code'] as String?;
+        
+        // 상점 관련 에러는 조용히 처리 (로그만, 사용자에게 알림 안 함)
+        if (errorCode == 'INVALID_STATE' && errorMsg.contains('상점')) {
+          // 상점이 없는 방으로 이동한 경우 - 정상 동작이므로 조용히 처리
+          print('[WS] 상점 없음 (정상): $errorMsg'); // ignore: avoid_print
+          // 상점 로딩 상태 해제
+          _activeShop = null;
+          _shopLoading = false;
+          _lastShopRoomId = gameState.roomId;
+          notifyListeners(); // UI 업데이트
+        } else {
+          // 다른 에러는 로그에 표시
+          addLog('❌ $errorMsg', 'ERROR');
+        }
         break;
       case 'INVENTORY_LIST':
         if (message.p['inventory'] != null) {
@@ -373,18 +419,21 @@ class SessionState extends ChangeNotifier {
           _shopLoading = false;
           _lastShopRoomId = gameState.roomId;
           addLog('🏪 상점 발견: ${_activeShop!.title} (${_activeShop!.items.length}개)', 'SYSTEM');
+          notifyListeners(); // UI 업데이트
         } catch (e) {
           print('[WS] SHOP_LIST 파싱 실패: $e'); // ignore: avoid_print
           _activeShop = null;
           _shopLoading = false;
+          notifyListeners(); // UI 업데이트
         }
         break;
       case 'SHOP_BUY_FAILED':
       case 'SHOP_LIST_FAILED':
-        // 상점 에러 (상점이 없는 방)
+        // 상점 에러 (상점이 없는 방) - 조용히 처리 (로그만)
         _activeShop = null;
         _shopLoading = false;
         _lastShopRoomId = gameState.roomId;
+        notifyListeners(); // UI 업데이트
         break;
       case 'SHOP_BUY_OK':
         try {
@@ -403,14 +452,8 @@ class SessionState extends ChangeNotifier {
               _addInventoryItem(result.itemId, result.qty);
             }
             
-            // cost에서 차감된 아이템 반영 (인장/트로피 등)
-            if (result.cost != null) {
-              for (final entry in result.cost!.entries) {
-                if (entry.key != 'gold') {
-                  _subtractInventoryItem(entry.key, entry.value);
-                }
-              }
-            }
+            // cost는 서버에서 이미 처리되었으므로 클라이언트에서는 골드만 반영
+            // costItems는 서버에서 이미 차감되었음
             
             addLog('✅ 구매 성공: ${result.itemId} x${result.qty}', 'SYSTEM');
           }
@@ -452,6 +495,11 @@ class SessionState extends ChangeNotifier {
           print('[WS] SEASON_STATUS 파싱 실패: $e'); // ignore: avoid_print
         }
         break;
+      case 'QUEST_ACCEPT_FAILED':
+        final errorMsg = message.p['message'] as String? ?? '퀘스트 수락 실패';
+        addLog('❌ $errorMsg', 'ERROR');
+        notifyListeners(); // UI 업데이트 (로딩 상태 해제)
+        break;
       case 'QUEST_LIST':
         try {
           final availableJson = message.p['available'] as List?;
@@ -464,9 +512,18 @@ class SessionState extends ChangeNotifier {
               ? activeJson.map((q) => QuestActiveView.fromJson(q as Map<String, dynamic>)).toList()
               : [];
           
+          // 디버깅 정보
+          print('[WS] QUEST_LIST 수신: 수락 가능 ${_availableQuests.length}개, 진행 중 ${_activeQuests.length}개'); // ignore: avoid_print
+          if (_availableQuests.isNotEmpty) {
+            print('[WS] 수락 가능 퀘스트 giverRoomId: ${_availableQuests.map((q) => q.giverRoomId).join(", ")}'); // ignore: avoid_print
+            print('[WS] 현재 방: ${gameState.roomId}'); // ignore: avoid_print
+          }
+          
           addLog('📜 퀘스트 목록 수신: 수락 가능 ${_availableQuests.length}개, 진행 중 ${_activeQuests.length}개', 'SYSTEM');
+          notifyListeners(); // UI 업데이트 (퀘스트 수락 후 자동 갱신)
         } catch (e) {
           print('[WS] QUEST_LIST 파싱 실패: $e'); // ignore: avoid_print
+          notifyListeners(); // UI 업데이트
         }
         break;
       case 'QUEST_TRACK':

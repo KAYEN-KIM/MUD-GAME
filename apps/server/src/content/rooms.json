@@ -1,103 +1,5 @@
 [
   {
-    "id": "GH_GUILDHALL",
-    "name": "그레이하버 - 길드홀",
-    "description": "모험가들이 모이는 길드홀입니다. 의뢰 게시판이 보입니다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-17T00:45:12.291Z"
-  },
-  {
-    "id": "GH_INN",
-    "name": "그레이하버 - 여관",
-    "description": "편안한 휴식처입니다. 숙박과 식사를 제공합니다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-17T00:45:12.296Z"
-  },
-  {
-    "id": "GH_TEMPLE",
-    "name": "그레이하버 - 신전",
-    "description": "신성한 기운이 감도는 곳입니다. 치유를 받을 수 있습니다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-17T00:45:12.302Z"
-  },
-  {
-    "id": "GH_MARKET",
-    "name": "그레이하버 - 시장",
-    "description": "활기찬 시장입니다. 다양한 물건을 사고 팔 수 있습니다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-17T00:45:12.307Z"
-  },
-  {
-    "id": "GH_BLACKSMITH",
-    "name": "그레이하버 - 대장간",
-    "description": "대장간의 불길이 타오릅니다. 무기와 방어구를 제작합니다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-17T00:45:12.313Z"
-  },
-  {
-    "id": "GH_APPRAISER",
-    "name": "그레이하버 - 감정소",
-    "description": "아이템을 감정하고 평가하는 곳입니다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-17T00:45:12.317Z"
-  },
-  {
-    "id": "GH_DOCKS",
-    "name": "그레이하버 - 부두",
-    "description": "바다가 보이는 항구입니다. 배들이 정박해 있습니다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-17T00:45:12.321Z"
-  },
-  {
     "id": "GH_SLUMS",
     "name": "그레이하버 - 빈민가",
     "description": "어두운 골목길입니다. 위험한 기운이 느껴집니다.",
@@ -144,42 +46,6 @@
     "dangerLevel": 2,
     "recommendedLevel": 2,
     "createdAt": "2025-12-17T00:45:12.343Z"
-  },
-  {
-    "id": "R2_06",
-    "name": "미궁 2층 - 2구역 2번",
-    "description": "더 깊고 위험한 미궁의 심연입니다. 불길한 기운이 가득합니다.",
-    "region": "dungeon2",
-    "tags": [],
-    "zoneId": "R2",
-    "depth": 12,
-    "dangerLevel": 5,
-    "recommendedLevel": 7,
-    "createdAt": "2025-12-17T00:45:12.452Z"
-  },
-  {
-    "id": "R2_07",
-    "name": "미궁 2층 - 2구역 3번",
-    "description": "더 깊고 위험한 미궁의 심연입니다. 불길한 기운이 가득합니다.",
-    "region": "dungeon2",
-    "tags": [],
-    "zoneId": "R2",
-    "depth": 13,
-    "dangerLevel": 5,
-    "recommendedLevel": 7,
-    "createdAt": "2025-12-17T00:45:12.456Z"
-  },
-  {
-    "id": "R2_08",
-    "name": "미궁 2층 - 2구역 4번",
-    "description": "더 깊고 위험한 미궁의 심연입니다. 불길한 기운이 가득합니다.",
-    "region": "dungeon2",
-    "tags": [],
-    "zoneId": "R2",
-    "depth": 14,
-    "dangerLevel": 5,
-    "recommendedLevel": 7,
-    "createdAt": "2025-12-17T00:45:12.460Z"
   },
   {
     "id": "R1_03",
@@ -264,6 +130,42 @@
     "dangerLevel": 3,
     "recommendedLevel": 3,
     "createdAt": "2025-12-17T00:45:12.372Z"
+  },
+  {
+    "id": "R2_06",
+    "name": "미궁 2층 - 2구역 2번",
+    "description": "더 깊고 위험한 미궁의 심연입니다. 불길한 기운이 가득합니다.",
+    "region": "dungeon2",
+    "tags": [],
+    "zoneId": "R2",
+    "depth": 12,
+    "dangerLevel": 5,
+    "recommendedLevel": 7,
+    "createdAt": "2025-12-17T00:45:12.452Z"
+  },
+  {
+    "id": "R2_07",
+    "name": "미궁 2층 - 2구역 3번",
+    "description": "더 깊고 위험한 미궁의 심연입니다. 불길한 기운이 가득합니다.",
+    "region": "dungeon2",
+    "tags": [],
+    "zoneId": "R2",
+    "depth": 13,
+    "dangerLevel": 5,
+    "recommendedLevel": 7,
+    "createdAt": "2025-12-17T00:45:12.456Z"
+  },
+  {
+    "id": "R2_08",
+    "name": "미궁 2층 - 2구역 4번",
+    "description": "더 깊고 위험한 미궁의 심연입니다. 불길한 기운이 가득합니다.",
+    "region": "dungeon2",
+    "tags": [],
+    "zoneId": "R2",
+    "depth": 14,
+    "dangerLevel": 5,
+    "recommendedLevel": 7,
+    "createdAt": "2025-12-17T00:45:12.460Z"
   },
   {
     "id": "R1_10",
@@ -472,6 +374,104 @@
     "createdAt": "2025-12-17T00:45:12.288Z"
   },
   {
+    "id": "GH_GUILDHALL",
+    "name": "그레이하버 - 길드홀",
+    "description": "모험가들이 모이는 길드홀입니다. 의뢰 게시판이 보입니다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-17T00:45:12.291Z"
+  },
+  {
+    "id": "GH_INN",
+    "name": "그레이하버 - 여관",
+    "description": "편안한 휴식처입니다. 숙박과 식사를 제공합니다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-17T00:45:12.296Z"
+  },
+  {
+    "id": "GH_TEMPLE",
+    "name": "그레이하버 - 신전",
+    "description": "신성한 기운이 감도는 곳입니다. 치유를 받을 수 있습니다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-17T00:45:12.302Z"
+  },
+  {
+    "id": "GH_MARKET",
+    "name": "그레이하버 - 시장",
+    "description": "활기찬 시장입니다. 다양한 물건을 사고 팔 수 있습니다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-17T00:45:12.307Z"
+  },
+  {
+    "id": "GH_BLACKSMITH",
+    "name": "그레이하버 - 대장간",
+    "description": "대장간의 불길이 타오릅니다. 무기와 방어구를 제작합니다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-17T00:45:12.313Z"
+  },
+  {
+    "id": "GH_APPRAISER",
+    "name": "그레이하버 - 감정소",
+    "description": "아이템을 감정하고 평가하는 곳입니다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-17T00:45:12.317Z"
+  },
+  {
+    "id": "GH_DOCKS",
+    "name": "그레이하버 - 부두",
+    "description": "바다가 보이는 항구입니다. 배들이 정박해 있습니다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-17T00:45:12.321Z"
+  },
+  {
     "id": "R2_09",
     "name": "미궁 2층 - 2구역 5번",
     "description": "더 깊고 위험한 미궁의 심연입니다. 불길한 기운이 가득합니다.",
@@ -554,6 +554,48 @@
     "dangerLevel": 5,
     "recommendedLevel": 7,
     "createdAt": "2025-12-17T00:45:12.493Z"
+  },
+  {
+    "id": "GH_TROPHY_HALL_S1",
+    "name": "전리품 전당 (S1)",
+    "description": "보스 트로피를 기념품으로 교환하는 장소다.",
+    "region": "city",
+    "tags": [
+      "SAFE"
+    ],
+    "zoneId": "CITY",
+    "depth": 0,
+    "dangerLevel": 0,
+    "recommendedLevel": 1,
+    "createdAt": "2025-12-19T10:42:47.886Z"
+  },
+  {
+    "id": "R1_BOSS_RESIDUE",
+    "name": "잔재 브로커의 작업장",
+    "description": "불안정한 균열의 기운이 감도는 작업장입니다. 잔재 브로커가 이곳에서 활동한 흔적이 남아있습니다.",
+    "region": "dungeon1",
+    "tags": [
+      "BOSS"
+    ],
+    "zoneId": "R1",
+    "depth": 2,
+    "dangerLevel": 3,
+    "recommendedLevel": 3,
+    "createdAt": "2025-12-18T03:28:16.176Z"
+  },
+  {
+    "id": "R2_BOSS_TOME",
+    "name": "연무의 서고 심층",
+    "description": "도서관의 가장 깊은 곳. 서고의 파수꾼이 오래된 서적을 지키고 있습니다.",
+    "region": "season2",
+    "tags": [
+      "BOSS"
+    ],
+    "zoneId": "R2",
+    "depth": 30,
+    "dangerLevel": 5,
+    "recommendedLevel": 18,
+    "createdAt": "2025-12-18T09:39:32.559Z"
   },
   {
     "id": "R2_16",
@@ -644,47 +686,5 @@
     "dangerLevel": 0,
     "recommendedLevel": 1,
     "createdAt": "2025-12-17T16:43:49.304Z"
-  },
-  {
-    "id": "GH_TROPHY_HALL_S1",
-    "name": "전리품 전당 (S1)",
-    "description": "보스 트로피를 기념품으로 교환하는 장소다.",
-    "region": "city",
-    "tags": [
-      "SAFE"
-    ],
-    "zoneId": "CITY",
-    "depth": 0,
-    "dangerLevel": 0,
-    "recommendedLevel": 1,
-    "createdAt": "2025-12-19T10:42:47.886Z"
-  },
-  {
-    "id": "R1_BOSS_RESIDUE",
-    "name": "잔재 브로커의 작업장",
-    "description": "불안정한 균열의 기운이 감도는 작업장입니다. 잔재 브로커가 이곳에서 활동한 흔적이 남아있습니다.",
-    "region": "dungeon1",
-    "tags": [
-      "BOSS"
-    ],
-    "zoneId": "R1",
-    "depth": 2,
-    "dangerLevel": 3,
-    "recommendedLevel": 3,
-    "createdAt": "2025-12-18T03:28:16.176Z"
-  },
-  {
-    "id": "R2_BOSS_TOME",
-    "name": "연무의 서고 심층",
-    "description": "도서관의 가장 깊은 곳. 서고의 파수꾼이 오래된 서적을 지키고 있습니다.",
-    "region": "season2",
-    "tags": [
-      "BOSS"
-    ],
-    "zoneId": "R2",
-    "depth": 30,
-    "dangerLevel": 5,
-    "recommendedLevel": 18,
-    "createdAt": "2025-12-18T09:39:32.559Z"
   }
 ]

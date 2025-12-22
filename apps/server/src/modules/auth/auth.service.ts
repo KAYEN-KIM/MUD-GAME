@@ -39,6 +39,12 @@ export class AuthService {
           create: {
             name: dto.characterName,
             roomId: 'GH_GATE', // 시작 위치
+            hp: 200,
+            hpMax: 200,
+            str: 20,
+            dex: 20,
+            intStat: 20,
+            gold: 1000,
           },
         },
       },

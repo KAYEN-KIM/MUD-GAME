@@ -71,14 +71,14 @@ model Character {
   name                  String    @unique
   level                 Int       @default(1)
   exp                   Int       @default(0)
-  hp                    Int       @default(100)
-  hpMax                 Int       @default(100)
+  hp                    Int       @default(200)
+  hpMax                 Int       @default(200)
   stamina               Int       @default(100)
   staminaMax            Int       @default(100)
-  str                   Int       @default(10)
-  dex                   Int       @default(10)
-  intStat               Int       @default(10)
-  gold                  Int       @default(0)
+  str                   Int       @default(20)
+  dex                   Int       @default(20)
+  intStat               Int       @default(20)
+  gold                  Int       @default(1000)
   roomId                String
   lastRestAt            DateTime?
   cosmeticIconItemId    String?   // Cosmetic icon item ID (e.g., ITEM_ICON_BONUS_S1)
@@ -268,7 +268,7 @@ model Party {
   leaderCharacterId  String
   code               String          @unique // Join code for party (6 chars)
   roomId             String
-  speedMode          PartySpeedMode  @default(TACTICAL)
+  speedMode          PartySpeedMode  @default(FAST)
   defaultPreset      AutoPreset      @default(AGGRO)
   createdAt          DateTime        @default(now())
   
@@ -390,5 +390,86 @@ model BossKillLog {
 
   @@unique([roomId, bossId])
   @@index([roomId])
+}
+
+// ===== TICK-BASED COMBAT SYSTEM =====
+
+enum CombatInstanceState {
+  IDLE
+  ENGAGED
+  RESOLVING
+  ENDED
+}
+
+enum CombatEntityType {
+  PLAYER
+  MONSTER
+}
+
+enum CombatActionType {
+  ATTACK
+  USE_ITEM
+  FLEE
+  CAST
+}
+
+model CombatInstance {
+  id         String               @id @default(cuid())
+  roomId     String
+  state      CombatInstanceState  @default(IDLE)
+  tick       Int                  @default(0)
+  nextTickAt DateTime
+  seed       Int?                 // RNG seed for determinism
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  
+  combatants CombatCombatant[]
+  actions    CombatActionQueue[]
+  
+  @@index([nextTickAt, state])
+  @@index([roomId])
+}
+
+model CombatCombatant {
+  id                String           @id @default(cuid())
+  instanceId        String
+  entityType        CombatEntityType
+  entityId          String           // characterId or monsterId
+  hp                Int
+  mp                Int              @default(0)
+  maxHp             Int
+  maxMp             Int              @default(0)
+  statsSnapshot     Json?            // {atk, def, spd, ...}
+  nextActionAt      DateTime
+  nextAutoAttackAt  DateTime
+  targetId          String?          // combatantId of target
+  status            Json             @default("{}")
+  casting           Json?            // {skillId, finishAt, ...}
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  instance CombatInstance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  actions  CombatActionQueue[]
+  
+  @@index([instanceId])
+  @@index([entityType, entityId])
+}
+
+model CombatActionQueue {
+  id           String           @id @default(cuid())
+  instanceId   String
+  combatantId  String
+  seq          Int              @default(0)
+  type         CombatActionType
+  payload      Json             @default("{}")
+  reqId        String           // for idempotency
+  createdAt    DateTime         @default(now())
+  
+  instance   CombatInstance    @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  combatant  CombatCombatant   @relation(fields: [combatantId], references: [id], onDelete: Cascade)
+  
+  @@unique([reqId, combatantId])
+  @@index([combatantId, seq])
+  @@index([instanceId])
 }
 

@@ -6,6 +6,7 @@ import { WsModule } from './modules/ws/ws.module';
 import { WorldModule } from './modules/world/world.module';
 import { PartyModule } from './modules/party/party.module';
 import { CombatModule } from './modules/combat/combat.module';
+import { CombatTickModule } from './modules/combat-tick/combat-tick.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { QuestModule } from './modules/quest/quest.module';
@@ -29,6 +30,7 @@ import { HealthController } from './health/health.controller';
     WorldModule,
     PartyModule,
     CombatModule,
+    CombatTickModule,
     ChatModule,
     AdminModule,
     SeasonModule,

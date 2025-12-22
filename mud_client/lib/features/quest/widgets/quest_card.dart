@@ -31,7 +31,7 @@ class QuestCard extends StatelessWidget {
   }
 
   Widget _buildAvailableQuest(BuildContext context, QuestTemplateView quest, String? currentRoomId) {
-    final canAccept = currentRoomId == quest.giverRoomId;
+    final canAccept = currentRoomId != null && currentRoomId == quest.giverRoomId;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -71,7 +71,9 @@ class QuestCard extends StatelessWidget {
   }
 
   Widget _buildActiveQuest(BuildContext context, QuestActiveView quest, String? currentRoomId) {
-    final canTurnIn = quest.status == QuestStatus.completed && currentRoomId == quest.turninRoomId;
+    final canTurnIn = quest.status == QuestStatus.completed && 
+                      currentRoomId != null && 
+                      currentRoomId == quest.turninRoomId;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -108,25 +110,24 @@ class QuestCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '제출: ${quest.turninRoomId}',
+              quest.status == QuestStatus.completed
+                  ? '제출 위치: ${quest.turninRoomId}${canTurnIn ? " (제출 가능)" : " (현재 위치: $currentRoomId)"}'
+                  : '제출 위치: ${quest.turninRoomId}',
               style: TextStyle(fontSize: 10, color: Colors.grey[600]),
             ),
           ],
         ),
         trailing: quest.status == QuestStatus.completed
             ? ElevatedButton(
-                onPressed: canTurnIn ? onTurnIn : null,
+                onPressed: canTurnIn && onTurnIn != null ? onTurnIn : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange[700],
+                  backgroundColor: canTurnIn ? Colors.orange[700] : Colors.grey[400],
                   foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 child: const Text('턴인'),
               )
-            : const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+            : null, // 진행 중 퀘스트는 로딩 표시 제거
       ),
     );
   }

@@ -3,8 +3,15 @@ import 'package:provider/provider.dart';
 import '../../../state/session_state.dart';
 import '../../../core/models/quest_models.dart';
 
-class QuestMiniTracker extends StatelessWidget {
+class QuestMiniTracker extends StatefulWidget {
   const QuestMiniTracker({super.key});
+
+  @override
+  State<QuestMiniTracker> createState() => _QuestMiniTrackerState();
+}
+
+class _QuestMiniTrackerState extends State<QuestMiniTracker> {
+  bool _isExpanded = false; // 기본적으로 접혀있음
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +38,9 @@ class QuestMiniTracker extends StatelessWidget {
           ...turninable,
           ...completed,
           ...active,
-        ].take(3).toList();
+        ];
+
+        final visibleQuests = _isExpanded ? displayQuests : displayQuests.take(3).toList();
 
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -40,23 +49,36 @@ class QuestMiniTracker extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.track_changes, size: 16, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    const Text(
-                      '진행 중 퀘스트',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '${activeQuests.length}개',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
-                  ],
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      const Icon(Icons.track_changes, size: 16, color: Colors.blue),
+                      const SizedBox(width: 8),
+                      const Text(
+                        '진행 중 퀘스트',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '${activeQuests.length}개',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        _isExpanded ? Icons.expand_less : Icons.expand_more,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 8),
-                ...displayQuests.map((quest) => _buildQuestTile(context, session, quest)),
+                ...visibleQuests.map((quest) => _buildQuestTile(context, session, quest)),
               ],
             ),
           ),
@@ -67,7 +89,9 @@ class QuestMiniTracker extends StatelessWidget {
 
   Widget _buildQuestTile(BuildContext context, SessionState session, QuestActiveView quest) {
     final currentRoom = session.gameState.roomId;
-    final canTurnIn = quest.status == QuestStatus.completed && quest.turninRoomId == currentRoom;
+    final canTurnIn = quest.status == QuestStatus.completed && 
+                      currentRoom != null && 
+                      currentRoom == quest.turninRoomId;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

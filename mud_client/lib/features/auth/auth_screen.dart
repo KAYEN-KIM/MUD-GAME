@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../state/session_state.dart';
 import '../home/home_screen.dart';
+import '../settings/settings_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -33,25 +34,27 @@ class _AuthScreenState extends State<AuthScreen> {
       return;
     }
 
-    if (!_isLogin && _characterNameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('캐릭터 이름을 입력하세요.')),
-      );
-      return;
-    }
-
     setState(() => _isLoading = true);
 
     try {
       final session = context.read<SessionState>();
       
       if (_isLogin) {
-        await session.login(_emailController.text, _passwordController.text);
+        // 로그인
+        await session.login(
+          _emailController.text,
+          _passwordController.text,
+        );
       } else {
+        // 회원가입
+        final characterName = _characterNameController.text.isEmpty
+            ? _emailController.text.split('@')[0] // 이메일 앞부분을 캐릭터 이름으로 사용
+            : _characterNameController.text;
+        
         await session.register(
           _emailController.text,
           _passwordController.text,
-          _characterNameController.text,
+          characterName,
         );
       }
 
@@ -62,9 +65,22 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
     } catch (e) {
+      print('[AuthScreen] Register error: $e');
       if (mounted) {
+        String errorMessage = '오류: $e';
+        // 더 친화적인 에러 메시지
+        if (e.toString().contains('서버에 연결할 수 없습니다') || 
+            e.toString().contains('Connection refused') ||
+            e.toString().contains('Failed host lookup')) {
+          errorMessage = '서버에 연결할 수 없습니다.\n설정 화면에서 서버 주소를 확인하세요.';
+        } else if (e.toString().contains('타임아웃')) {
+          errorMessage = '서버 응답이 없습니다.\n서버가 실행 중인지 확인하세요.';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('오류: $e')),
+          SnackBar(
+            content: Text(errorMessage),
+            duration: const Duration(seconds: 5),
+          ),
         );
       }
     } finally {
@@ -79,14 +95,27 @@ class _AuthScreenState extends State<AuthScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('MUD Client'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: '서버 설정',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
               const Icon(Icons.games, size: 80, color: Colors.blue),
               const SizedBox(height: 24),
               Text(
@@ -117,7 +146,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 TextField(
                   controller: _characterNameController,
                   decoration: const InputDecoration(
-                    labelText: '캐릭터 이름',
+                    labelText: '캐릭터 이름 (선택사항)',
+                    hintText: '비워두면 이메일 앞부분 사용',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -135,15 +165,16 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () {
+                onPressed: _isLoading ? null : () {
                   setState(() {
                     _isLogin = !_isLogin;
                   });
                 },
-                child: Text(_isLogin ? '회원가입하기' : '로그인하기'),
+                child: Text(_isLogin ? '회원가입으로 전환' : '로그인으로 전환'),
               ),
             ],
           ),
+        ),
         ),
       ),
     );
