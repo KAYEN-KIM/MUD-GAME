@@ -128,8 +128,12 @@ export class ShopService {
     characterId: string,
     roomId: string,
     itemId: string,
+    qty: number = 1,
     reqId?: string,
   ): Promise<ShopBuyResult> {
+    if (!Number.isFinite(qty) || qty < 1) {
+      throw new Error('qty는 1 이상이어야 합니다.');
+    }
     // reqId 기반 idempotency 체크
     if (reqId) {
       const cacheKey = `${characterId}:${reqId}`;
@@ -150,7 +154,7 @@ export class ShopService {
     }
 
     // 새로운 구매 시작
-    const buyPromise = this.executeBuy(characterId, roomId, itemId);
+    const buyPromise = this.executeBuy(characterId, roomId, itemId, qty);
     this.characterLocks.set(lockKey, buyPromise);
 
     try {
@@ -179,6 +183,7 @@ export class ShopService {
     characterId: string,
     roomId: string,
     itemId: string,
+    qty: number,
   ): Promise<ShopBuyResult> {
     return this.prisma.$transaction(async (tx) => {
       // 1. 현재 방에 상점이 있는지 확인
@@ -218,8 +223,11 @@ export class ShopService {
 
       // 비용 계산
       const cost = {
-        gold: shopEntry.priceGold || 0,
-        costItems: shopEntry.costItems || [],
+        gold: (shopEntry.priceGold || 0) * qty,
+        costItems: (shopEntry.costItems || []).map((c) => ({
+          itemId: c.itemId,
+          qty: c.qty * qty,
+        })),
       };
 
       // 4. 골드 결제 (priceGold가 있으면)
@@ -282,20 +290,20 @@ export class ShopService {
           where: {
             characterId_itemId: { characterId, itemId },
           },
-          data: { qty: existing.qty + 1 },
+          data: { qty: existing.qty + qty },
         });
       } else {
         await tx.inventory.create({
           data: {
             characterId,
             itemId,
-            qty: 1,
+            qty,
           },
         });
       }
 
       // 7. QuestService.onItemGained 호출 (퀘스트 진행도 업데이트)
-      const questResult = await this.questService.onItemGained(characterId, itemId, 1);
+      const questResult = await this.questService.onItemGained(characterId, itemId, qty);
       
       // 8. 최종 골드 조회
       const updatedCharacter = await tx.character.findUnique({
@@ -307,9 +315,9 @@ export class ShopService {
       return {
         success: true,
         itemId,
-        qty: 1,
+        qty,
         cost,
-        granted: [{ itemId, qty: 1 }],
+        granted: [{ itemId, qty }],
         balances: {
           gold: updatedCharacter?.gold || character.gold - cost.gold,
         },

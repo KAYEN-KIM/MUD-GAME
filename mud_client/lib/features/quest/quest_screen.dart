@@ -57,52 +57,54 @@ class _QuestScreenState extends State<QuestScreen> with SingleTickerProviderStat
           ],
         ),
       ),
-      body: Consumer<SessionState>(
-        builder: (context, session, _) {
-          final availableQuests = session.availableQuests;
-          final activeQuests = session.activeQuests;
+      body: SafeArea(
+        child: Consumer<SessionState>(
+          builder: (context, session, _) {
+            final availableQuests = session.availableQuests;
+            final activeQuests = session.activeQuests;
 
-          return Column(
-            children: [
-              // 리셋 타이머 & 시즌 진행도
-              const ResetTimerWidget(),
-              const SeasonProgressWidget(),
-              
-              // 퀘스트 리스트
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildQuestTab(
-                      context,
-                      session,
-                      _getQuestsByCadence(availableQuests, QuestCadence.daily),
-                      _getQuestsByCadenceActive(activeQuests, QuestCadence.daily),
-                    ),
-                    _buildQuestTab(
-                      context,
-                      session,
-                      _getQuestsByCadence(availableQuests, QuestCadence.weekly),
-                      _getQuestsByCadenceActive(activeQuests, QuestCadence.weekly),
-                    ),
-                    _buildQuestTab(
-                      context,
-                      session,
-                      _getQuestsByCadence(availableQuests, QuestCadence.meta),
-                      _getQuestsByCadenceActive(activeQuests, QuestCadence.meta),
-                    ),
-                    _buildQuestTab(
-                      context,
-                      session,
-                      _getQuestsByCadence(availableQuests, QuestCadence.story),
-                      _getQuestsByCadenceActive(activeQuests, QuestCadence.story),
-                    ),
-                  ],
+            return Column(
+              children: [
+                // 리셋 타이머 & 시즌 진행도
+                const ResetTimerWidget(),
+                const SeasonProgressWidget(),
+                
+                // 퀘스트 리스트
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildQuestTab(
+                        context,
+                        session,
+                        _getQuestsByCadence(availableQuests, QuestCadence.daily),
+                        _getQuestsByCadenceActive(activeQuests, QuestCadence.daily),
+                      ),
+                      _buildQuestTab(
+                        context,
+                        session,
+                        _getQuestsByCadence(availableQuests, QuestCadence.weekly),
+                        _getQuestsByCadenceActive(activeQuests, QuestCadence.weekly),
+                      ),
+                      _buildQuestTab(
+                        context,
+                        session,
+                        _getQuestsByCadence(availableQuests, QuestCadence.meta),
+                        _getQuestsByCadenceActive(activeQuests, QuestCadence.meta),
+                      ),
+                      _buildQuestTab(
+                        context,
+                        session,
+                        _getQuestsByCadence(availableQuests, QuestCadence.story),
+                        _getQuestsByCadenceActive(activeQuests, QuestCadence.story),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -155,8 +155,12 @@ class GameState {
   int? level;
   int? hp;
   int? hpMax;
+  int? mp;
+  int? mpMax;
   int? exp;
   int? gold;
+  int? skillPoints; // 스킬 포인트 (SKILL_LEARN 등에 사용)
+  String? currentTitle; // 표시용 현재 칭호 (업적 화면 등)
   List<String>? roomTags; // 현재 방의 태그 (SAFE 등)
   List<RoomExit>? exits; // 가능한 출구 목록
   Map<String, EquippedItem>? equipment; // 장착 장비
@@ -174,8 +178,12 @@ class GameState {
     this.level,
     this.hp,
     this.hpMax,
+    this.mp,
+    this.mpMax,
     this.exp,
     this.gold,
+    this.skillPoints,
+    this.currentTitle,
     this.roomTags,
     this.exits,
     this.equipment,
@@ -194,8 +202,12 @@ class GameState {
       level = char['level'] as int?;
       hp = char['hp'] as int?;
       hpMax = char['hpMax'] as int?;
+      mp = char['mp'] as int?;
+      mpMax = char['mpMax'] as int?;
       exp = char['exp'] as int?;
       gold = char['gold'] as int?;
+      skillPoints = char['skillPoints'] as int? ?? skillPoints;
+      currentTitle = char['currentTitle'] as String? ?? currentTitle;
 
       // roomTags 파싱
       if (char['roomTags'] != null) {
@@ -273,6 +285,7 @@ class GameState {
     if (characterName != null) parts.add('캐릭터: $characterName');
     if (level != null) parts.add('Lv.$level');
     if (hp != null && hpMax != null) parts.add('HP: $hp/$hpMax');
+    if (mp != null && mpMax != null) parts.add('MP: $mp/$mpMax');
     if (roomId != null) parts.add('룸: $roomId');
     
     final pid = partyId;

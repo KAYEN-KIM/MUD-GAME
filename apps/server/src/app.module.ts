@@ -9,20 +9,22 @@ import { CombatModule } from './modules/combat/combat.module';
 import { CombatTickModule } from './modules/combat-tick/combat-tick.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { AdminModule } from './modules/admin/admin.module';
-import { QuestModule } from './modules/quest/quest.module';
 import { SeasonModule } from './modules/season/season.module';
+import { QuestModule } from './modules/quest/quest.module';
 import { ShopModule } from './modules/shop/shop.module';
 import { BossModule } from './modules/boss/boss.module';
+import { ProgressionModule } from './modules/progression/progression.module';
+import { SkillModule } from './modules/skills/skill.module';
+import { DungeonModule } from './modules/dungeon/dungeon.module';
+import { ItemDropModule } from './modules/item-drop/item-drop.module';
 import { RateLimitModule } from './rate-limit/rate-limit.module';
-import { PrismaService } from './common/prisma.service';
-import { RedisService } from './common/redis.service';
-import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validate: envValidation,
+      envFilePath: ['.env', '../.env', '../../.env'],
     }),
     RateLimitModule,
     AuthModule,
@@ -37,10 +39,10 @@ import { HealthController } from './health/health.controller';
     QuestModule,
     ShopModule,
     BossModule,
+    ProgressionModule,
+    SkillModule,
+    DungeonModule,
+    ItemDropModule,
   ],
-  controllers: [HealthController],
-  providers: [PrismaService, RedisService],
-  exports: [PrismaService, RedisService],
 })
 export class AppModule {}
-

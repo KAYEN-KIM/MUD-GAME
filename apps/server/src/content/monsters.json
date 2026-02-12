@@ -3,187 +3,198 @@
     "id": "MON_RAT",
     "name": "쥐",
     "level": 1,
-    "hp": 20,
+    "hp": 50,
     "atk": 5,
-    "def": 2,
-    "aiJson": {
-      "behavior": "passive"
-    }
+    "def": 1,
+    "aiString": "{\"behavior\":\"passive\"}"
   },
   {
     "id": "MON_GOBLIN",
     "name": "고블린",
     "level": 2,
-    "hp": 40,
+    "hp": 80,
     "atk": 8,
-    "def": 4,
-    "aiJson": {
-      "behavior": "aggressive"
-    }
+    "def": 2,
+    "aiString": "{\"behavior\":\"aggressive\"}"
   },
   {
     "id": "MON_WOLF",
     "name": "늑대",
     "level": 3,
-    "hp": 60,
+    "hp": 120,
     "atk": 12,
-    "def": 6,
-    "aiJson": {
-      "behavior": "aggressive"
-    }
+    "def": 4,
+    "aiString": "{\"behavior\":\"aggressive\"}"
   },
   {
     "id": "MON_ORC",
     "name": "오크",
     "level": 4,
-    "hp": 100,
+    "hp": 160,
     "atk": 15,
-    "def": 10,
-    "aiJson": {
-      "behavior": "aggressive"
-    }
+    "def": 6,
+    "aiString": "{\"behavior\":\"aggressive\"}"
   },
   {
     "id": "MON_SKELETON",
     "name": "스켈레톤",
     "level": 5,
-    "hp": 80,
+    "hp": 200,
     "atk": 18,
     "def": 8,
-    "aiJson": {
-      "behavior": "aggressive"
-    }
+    "aiString": "{\"behavior\":\"aggressive\"}"
   },
   {
     "id": "MON_ZOMBIE",
     "name": "좀비",
     "level": 5,
-    "hp": 120,
-    "atk": 10,
-    "def": 12,
-    "aiJson": {
-      "behavior": "slow"
-    }
+    "hp": 220,
+    "atk": 16,
+    "def": 10,
+    "aiString": "{\"behavior\":\"slow\"}"
   },
   {
     "id": "MON_SPIDER",
     "name": "거미",
     "level": 6,
-    "hp": 90,
+    "hp": 260,
     "atk": 20,
-    "def": 7,
-    "aiJson": {
-      "behavior": "ambush"
-    }
+    "def": 10,
+    "aiString": "{\"behavior\":\"ambush\"}"
   },
   {
     "id": "MON_BANDIT",
     "name": "산적",
     "level": 7,
-    "hp": 150,
-    "atk": 22,
-    "def": 15,
-    "aiJson": {
-      "behavior": "tactical"
-    }
+    "hp": 300,
+    "atk": 25,
+    "def": 12,
+    "aiString": "{\"behavior\":\"tactical\"}"
   },
   {
     "id": "MON_GOLEM",
     "name": "골렘",
     "level": 8,
-    "hp": 200,
-    "atk": 25,
-    "def": 20,
-    "aiJson": {
-      "behavior": "defensive"
-    }
+    "hp": 400,
+    "atk": 28,
+    "def": 18,
+    "aiString": "{\"behavior\":\"defensive\"}"
   },
   {
     "id": "MON_VAMPIRE",
     "name": "뱀파이어",
     "level": 10,
-    "hp": 250,
-    "atk": 30,
-    "def": 18,
-    "aiJson": {
-      "behavior": "lifesteal"
-    }
+    "hp": 500,
+    "atk": 35,
+    "def": 20,
+    "aiString": "{\"behavior\":\"lifesteal\"}"
   },
   {
     "id": "MON_DEMON",
     "name": "악마",
     "level": 12,
-    "hp": 300,
-    "atk": 35,
+    "hp": 650,
+    "atk": 45,
     "def": 25,
-    "aiJson": {
-      "behavior": "aggressive"
-    }
+    "aiString": "{\"behavior\":\"aggressive\"}"
   },
   {
     "id": "MON_DRAGON",
     "name": "드래곤",
     "level": 15,
-    "hp": 500,
-    "atk": 50,
-    "def": 40,
-    "aiJson": {
-      "behavior": "boss"
-    }
+    "hp": 1000,
+    "atk": 60,
+    "def": 35,
+    "aiString": "{\"behavior\":\"boss\"}"
   },
   {
     "id": "BOSS_RESIDUE_BROKER",
     "name": "잔재 브로커",
     "level": 10,
-    "hp": 200,
-    "atk": 20,
-    "def": 15,
-    "aiJson": {
-      "behavior": "boss"
-    }
+    "hp": 600,
+    "atk": 40,
+    "def": 25,
+    "aiString": "{\"behavior\":\"boss\"}"
   },
   {
     "id": "M_S2_FOG_SCRIBE",
     "name": "안개 서기",
     "level": 13,
-    "hp": 320,
-    "atk": 38,
+    "hp": 750,
+    "atk": 50,
     "def": 28,
-    "aiJson": {
-      "behavior": "aggressive"
-    }
+    "aiString": "{\"behavior\":\"aggressive\"}"
   },
   {
     "id": "M_S2_PAGE_WRAITH",
     "name": "페이지 망령",
     "level": 14,
-    "hp": 280,
-    "atk": 42,
-    "def": 24,
-    "aiJson": {
-      "behavior": "ambush"
-    }
+    "hp": 800,
+    "atk": 55,
+    "def": 30,
+    "aiString": "{\"behavior\":\"ambush\"}"
   },
   {
     "id": "M_S2_INK_LEECH",
     "name": "잉크 거머리",
     "level": 15,
-    "hp": 340,
-    "atk": 40,
-    "def": 30,
-    "aiJson": {
-      "behavior": "lifesteal"
-    }
+    "hp": 850,
+    "atk": 58,
+    "def": 32,
+    "aiString": "{\"behavior\":\"lifesteal\"}"
   },
   {
     "id": "BOSS_TOME_WARDEN",
     "name": "서고의 파수꾼",
     "level": 18,
-    "hp": 450,
-    "atk": 45,
-    "def": 35,
-    "aiJson": {
-      "behavior": "boss"
-    }
+    "hp": 1500,
+    "atk": 70,
+    "def": 40,
+    "aiString": "{\"behavior\":\"boss\"}"
+  },
+  {
+    "id": "MON_LICH",
+    "name": "리치",
+    "level": 16,
+    "hp": 1200,
+    "atk": 65,
+    "def": 38,
+    "aiString": "{\"behavior\":\"magic\"}"
+  },
+  {
+    "id": "MON_BEHEMOTH",
+    "name": "베헤모스",
+    "level": 18,
+    "hp": 1800,
+    "atk": 75,
+    "def": 45,
+    "aiString": "{\"behavior\":\"tank\"}"
+  },
+  {
+    "id": "MON_PHOENIX",
+    "name": "피닉스",
+    "level": 20,
+    "hp": 2000,
+    "atk": 80,
+    "def": 50,
+    "aiString": "{\"behavior\":\"resurrect\"}"
+  },
+  {
+    "id": "MON_TITAN",
+    "name": "타이탄",
+    "level": 25,
+    "hp": 3000,
+    "atk": 100,
+    "def": 60,
+    "aiString": "{\"behavior\":\"boss\"}"
+  },
+  {
+    "id": "MON_ARCHDEMON",
+    "name": "대악마",
+    "level": 30,
+    "hp": 5000,
+    "atk": 150,
+    "def": 80,
+    "aiString": "{\"behavior\":\"boss\"}"
   }
 ]

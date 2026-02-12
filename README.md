@@ -24,6 +24,7 @@ pnpm prod:up
 **문서:**
 - 개발 가이드: [docs/DEV_QUICKSTART.md](./docs/DEV_QUICKSTART.md)
 - 프로덕션 배포: [docs/DEPLOY_LOCAL_PRODLIKE.md](./docs/DEPLOY_LOCAL_PRODLIKE.md)
+- 실행 가이드(Web/Android/iOS): [docs/RUN_GUIDE.md](./docs/RUN_GUIDE.md)
 
 ---
 

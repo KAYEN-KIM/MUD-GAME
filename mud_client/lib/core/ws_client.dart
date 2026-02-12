@@ -85,6 +85,63 @@ class WSClient {
     ));
   }
 
+  void requestSpellList() {
+    sendMessage(WSMessage(
+      t: 'SPELL_LIST',
+      reqId: _generateReqId(),
+      ts: DateTime.now().millisecondsSinceEpoch,
+      p: {},
+    ));
+  }
+
+  void requestRoomMonsters() {
+    sendMessage(WSMessage(
+      t: 'ROOM_MONSTERS',
+      reqId: _generateReqId(),
+      ts: DateTime.now().millisecondsSinceEpoch,
+      p: {},
+    ));
+  }
+
+  void requestSkillList() {
+    sendMessage(WSMessage(
+      t: 'SKILL_LIST',
+      reqId: _generateReqId(),
+      ts: DateTime.now().millisecondsSinceEpoch,
+      p: {},
+    ));
+  }
+
+  void learnSkill({required String skillId}) {
+    sendMessage(WSMessage(
+      t: 'SKILL_LEARN',
+      reqId: _generateReqId(),
+      ts: DateTime.now().millisecondsSinceEpoch,
+      p: {'skillId': skillId},
+    ));
+  }
+
+  void requestDungeonList() {
+    sendMessage(WSMessage(
+      t: 'DUNGEON_LIST',
+      reqId: _generateReqId(),
+      ts: DateTime.now().millisecondsSinceEpoch,
+      p: {},
+    ));
+  }
+
+  void enterDungeon({required String dungeonId, required String difficulty}) {
+    sendMessage(WSMessage(
+      t: 'DUNGEON_ENTER',
+      reqId: _generateReqId(),
+      ts: DateTime.now().millisecondsSinceEpoch,
+      p: {
+        'dungeonId': dungeonId,
+        'difficulty': difficulty,
+      },
+    ));
+  }
+
   void sendMessage(WSMessage message) {
     if (!_isConnected || _channel == null) {
       onError('WebSocket이 연결되지 않았습니다.');
@@ -181,6 +238,19 @@ class WSClient {
       p: {
         'channel': channel,
         'text': text,
+      },
+    ));
+  }
+
+  void cast({required String spell, String? target, String? encounterId}) {
+    sendMessage(WSMessage(
+      t: 'CAST',
+      reqId: _generateReqId(),
+      ts: DateTime.now().millisecondsSinceEpoch,
+      p: {
+        'spell': spell,
+        if (target != null) 'target': target,
+        if (encounterId != null) 'encounterId': encounterId,
       },
     ));
   }

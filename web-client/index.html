@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUD Game - 웹 클라이언트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .header {
+            background: #2a2a2a;
+            padding: 15px;
+            border: 2px solid #00ff00;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .right-panel {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .panel {
+            background: #2a2a2a;
+            border: 2px solid #00ff00;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .panel h3 {
+            margin-bottom: 10px;
+            color: #00ffff;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 5px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .login-form input {
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .login-form button {
+            padding: 10px;
+            background: #00ff00;
+            border: none;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .login-form button:hover {
+            background: #00cc00;
+        }
+        
+        .login-form button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        .game-log {
+            flex: 1;
+            min-height: 300px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .game-log .message {
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+        
+        .game-log .system {
+            color: #ffff00;
+        }
+        
+        .game-log .error {
+            color: #ff0000;
+        }
+        
+        .game-log .success {
+            color: #00ff00;
+        }
+        
+        .game-log .info {
+            color: #00ffff;
+        }
+        
+        .command-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .command-input input {
+            flex: 1;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .command-input button {
+            padding: 10px 20px;
+            background: #00ff00;
+            border: none;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .command-input button:hover {
+            background: #00cc00;
+        }
+        
+        .status {
+            font-size: 12px;
+        }
+        
+        .status-item {
+            margin-bottom: 5px;
+        }
+        
+        .status-label {
+            color: #00ffff;
+        }
+        
+        .chat-messages {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        
+        .chat-message {
+            margin-bottom: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 5px;
+            background: #1a1a1a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .chat-input button {
+            padding: 5px 10px;
+            background: #00ff00;
+            border: none;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .connection-status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        
+        .connected {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .disconnected {
+            background: #ff0000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 MUD Game - 웹 클라이언트</h1>
+            <div style="margin-top: 10px;">
+                <span class="connection-status disconnected" id="connectionStatus">연결 안됨</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="panel" id="loginPanel">
+                    <h3>로그인 / 회원가입</h3>
+                    <div class="login-form">
+                        <input type="email" id="emailInput" placeholder="이메일" />
+                        <input type="password" id="passwordInput" placeholder="비밀번호" />
+                        <input type="text" id="characterNameInput" placeholder="캐릭터 이름 (회원가입 시)" />
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="handleLogin()">로그인</button>
+                            <button onclick="handleRegister()">회원가입</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel hidden" id="gamePanel">
+                    <h3>게임 로그</h3>
+                    <div class="game-log" id="gameLog"></div>
+                    <div class="command-input" style="margin-top: 10px;">
+                        <input type="text" id="commandInput" placeholder="명령어 입력 (예: MOVE north, LOOK, CHAT hello)" />
+                        <button onclick="sendCommand()">전송</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel hidden" id="statusPanel">
+                    <h3>상태</h3>
+                    <div class="status" id="statusContent"></div>
+                </div>
+                
+                <div class="panel hidden" id="chatPanel">
+                    <h3>채팅</h3>
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input" style="margin-top: 10px;">
+                        <input type="text" id="chatInput" placeholder="채팅 메시지" />
+                        <button onclick="sendChat()">전송</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:3000';
+        const WS_URL = 'ws://localhost:3000';
+        
+        let ws = null;
+        let token = null;
+        let characterId = null;
+        let characterName = null;
+        let gameState = null;
+        
+        // 로그인
+        async function handleLogin() {
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            
+            if (!email || !password) {
+                addLog('이메일과 비밀번호를 입력하세요.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    characterId = data.character?.id;
+                    characterName = data.character?.name;
+                    addLog(`로그인 성공! 캐릭터: ${characterName}`, 'success');
+                    connectWebSocket();
+                } else {
+                    addLog(`로그인 실패: ${data.message || '알 수 없는 오류'}`, 'error');
+                }
+            } catch (error) {
+                addLog(`로그인 오류: ${error.message}`, 'error');
+            }
+        }
+        
+        // 회원가입
+        async function handleRegister() {
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const characterName = document.getElementById('characterNameInput').value;
+            
+            if (!email || !password || !characterName) {
+                addLog('이메일, 비밀번호, 캐릭터 이름을 모두 입력하세요.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, characterName })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    characterId = data.character?.id;
+                    characterName = data.character?.name;
+                    addLog(`회원가입 성공! 캐릭터: ${characterName}`, 'success');
+                    connectWebSocket();
+                } else {
+                    addLog(`회원가입 실패: ${data.message || '알 수 없는 오류'}`, 'error');
+                }
+            } catch (error) {
+                addLog(`회원가입 오류: ${error.message}`, 'error');
+            }
+        }
+        
+        // WebSocket 연결
+        function connectWebSocket() {
+            if (!token) {
+                addLog('토큰이 없습니다. 먼저 로그인하세요.', 'error');
+                return;
+            }
+            
+            try {
+                ws = new WebSocket(WS_URL);
+                
+                ws.onopen = () => {
+                    addLog('WebSocket 연결됨', 'success');
+                    updateConnectionStatus(true);
+                    sendAuth();
+                };
+                
+                ws.onmessage = (event) => {
+                    try {
+                        const message = JSON.parse(event.data);
+                        handleMessage(message);
+                    } catch (error) {
+                        addLog(`메시지 파싱 오류: ${error.message}`, 'error');
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    addLog('WebSocket 오류 발생', 'error');
+                    updateConnectionStatus(false);
+                };
+                
+                ws.onclose = () => {
+                    addLog('WebSocket 연결 종료', 'system');
+                    updateConnectionStatus(false);
+                };
+            } catch (error) {
+                addLog(`WebSocket 연결 실패: ${error.message}`, 'error');
+            }
+        }
+        
+        // 인증 전송
+        function sendAuth() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            const message = {
+                t: 'AUTH',
+                reqId: generateReqId(),
+                ts: Date.now(),
+                p: { token }
+            };
+            
+            ws.send(JSON.stringify(message));
+        }
+        
+        // 메시지 처리
+        function handleMessage(message) {
+            switch (message.t) {
+                case 'AUTH_OK':
+                    addLog('인증 성공!', 'success');
+                    document.getElementById('loginPanel').classList.add('hidden');
+                    document.getElementById('gamePanel').classList.remove('hidden');
+                    document.getElementById('statusPanel').classList.remove('hidden');
+                    document.getElementById('chatPanel').classList.remove('hidden');
+                    break;
+                    
+                case 'STATE_SYNC':
+                    gameState = message.p;
+                    updateStatus();
+                    if (gameState.room) {
+                        addLog(`현재 위치: ${gameState.room.name}`, 'info');
+                        addLog(gameState.room.description, 'info');
+                    }
+                    break;
+                    
+                case 'LOG_APPEND':
+                    if (message.p.logs) {
+                        message.p.logs.forEach(log => {
+                            addLog(log, 'info');
+                        });
+                    }
+                    break;
+                    
+                case 'MOVE':
+                    if (message.p.room) {
+                        addLog(`이동 완료: ${message.p.room.name}`, 'success');
+                    }
+                    break;
+                    
+                case 'CHAT':
+                    if (message.p.message) {
+                        addChatMessage(message.p.characterName || '시스템', message.p.message);
+                    }
+                    break;
+                    
+                default:
+                    addLog(`[${message.t}] ${JSON.stringify(message.p)}`, 'info');
+            }
+        }
+        
+        // 명령어 전송
+        function sendCommand() {
+            const input = document.getElementById('commandInput');
+            const command = input.value.trim();
+            
+            if (!command || !ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            const parts = command.split(' ');
+            const action = parts[0].toUpperCase();
+            const args = parts.slice(1);
+            
+            let message = null;
+            
+            switch (action) {
+                case 'MOVE':
+                case 'GO':
+                    message = {
+                        t: 'MOVE',
+                        reqId: generateReqId(),
+                        ts: Date.now(),
+                        p: { direction: args[0] || 'north' }
+                    };
+                    break;
+                    
+                case 'LOOK':
+                case 'L':
+                    message = {
+                        t: 'LOOK',
+                        reqId: generateReqId(),
+                        ts: Date.now(),
+                        p: {}
+                    };
+                    break;
+                    
+                case 'CHAT':
+                    const chatMessage = args.join(' ');
+                    message = {
+                        t: 'CHAT',
+                        reqId: generateReqId(),
+                        ts: Date.now(),
+                        p: {
+                            channel: 'GLOBAL',
+                            message: chatMessage
+                        }
+                    };
+                    break;
+                    
+                default:
+                    addLog(`알 수 없는 명령어: ${action}`, 'error');
+                    input.value = '';
+                    return;
+            }
+            
+            if (message) {
+                ws.send(JSON.stringify(message));
+                input.value = '';
+            }
+        }
+        
+        // 채팅 전송
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || !ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            const wsMessage = {
+                t: 'CHAT',
+                reqId: generateReqId(),
+                ts: Date.now(),
+                p: {
+                    channel: 'GLOBAL',
+                    message: message
+                }
+            };
+            
+            ws.send(JSON.stringify(wsMessage));
+            input.value = '';
+        }
+        
+        // 상태 업데이트
+        function updateStatus() {
+            if (!gameState) return;
+            
+            const statusContent = document.getElementById('statusContent');
+            const character = gameState.character;
+            
+            if (character) {
+                statusContent.innerHTML = `
+                    <div class="status-item">
+                        <span class="status-label">이름:</span> ${character.name || 'N/A'}
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">레벨:</span> ${character.level || 1}
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">HP:</span> ${character.hp || 0} / ${character.hpMax || 0}
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">MP:</span> ${character.mp || 0} / ${character.mpMax || 0}
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">골드:</span> ${character.gold || 0}
+                    </div>
+                `;
+            }
+        }
+        
+        // 로그 추가
+        function addLog(text, type = 'info') {
+            const log = document.getElementById('gameLog');
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+            log.appendChild(message);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // 채팅 메시지 추가
+        function addChatMessage(name, message) {
+            const chat = document.getElementById('chatMessages');
+            const chatMsg = document.createElement('div');
+            chatMsg.className = 'chat-message';
+            chatMsg.innerHTML = `<strong>${name}:</strong> ${message}`;
+            chat.appendChild(chatMsg);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        // 연결 상태 업데이트
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            if (connected) {
+                status.textContent = '연결됨';
+                status.className = 'connection-status connected';
+            } else {
+                status.textContent = '연결 안됨';
+                status.className = 'connection-status disconnected';
+            }
+        }
+        
+        // 요청 ID 생성
+        function generateReqId() {
+            return 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Enter 키로 명령어 전송
+        document.getElementById('commandInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendCommand();
+            }
+        });
+        
+        // Enter 키로 채팅 전송
+        document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChat();
+            }
+        });
+        
+        // Enter 키로 로그인
+        document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+    </script>
+</body>
+</html>

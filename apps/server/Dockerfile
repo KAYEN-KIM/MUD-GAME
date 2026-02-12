@@ -44,16 +44,20 @@ RUN corepack enable
 
 WORKDIR /app
 
-# 프로덕션 의존성만 설치
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# 프로덕션 의존성 + Prisma CLI 설치 (마이그레이션용)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./ 
 COPY apps/server/package.json ./apps/server/
 
-RUN pnpm install --frozen-lockfile --prod
+# Prisma를 devDependencies에서도 설치 (마이그레이션 실행용)
+RUN pnpm install --frozen-lockfile
 
 # 빌드 결과물 복사
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
 COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
 COPY --from=builder /app/apps/server/node_modules/.prisma ./apps/server/node_modules/.prisma
+
+# Prisma CLI를 위한 node_modules 경로 설정
+ENV PATH="/app/node_modules/.bin:$PATH"
 
 # content 파일 복사 (JSON 데이터)
 COPY apps/server/content ./apps/server/content

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../state/session_state.dart';
 import '../../../core/models/quest_models.dart';
+import '../../../core/room_names.dart';
 
 class QuestCard extends StatelessWidget {
   final QuestTemplateView? availableQuest;
@@ -53,7 +54,7 @@ class QuestCard extends StatelessWidget {
             Text(quest.description, style: const TextStyle(fontSize: 12)),
             const SizedBox(height: 4),
             Text(
-              '수락: ${quest.giverRoomId} | 제출: ${quest.turninRoomId}',
+              '수락: ${RoomNames.getName(quest.giverRoomId)} | 제출: ${RoomNames.getName(quest.turninRoomId)}',
               style: TextStyle(fontSize: 10, color: Colors.grey[600]),
             ),
           ],
@@ -111,8 +112,8 @@ class QuestCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               quest.status == QuestStatus.completed
-                  ? '제출 위치: ${quest.turninRoomId}${canTurnIn ? " (제출 가능)" : " (현재 위치: $currentRoomId)"}'
-                  : '제출 위치: ${quest.turninRoomId}',
+                  ? '제출 위치: ${RoomNames.getName(quest.turninRoomId)}${canTurnIn ? " (제출 가능)" : " (현재 위치: ${currentRoomId != null ? RoomNames.getName(currentRoomId) : "알 수 없음"})"}'
+                  : '제출 위치: ${RoomNames.getName(quest.turninRoomId)}',
               style: TextStyle(fontSize: 10, color: Colors.grey[600]),
             ),
           ],
@@ -125,7 +126,7 @@ class QuestCard extends StatelessWidget {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
-                child: const Text('턴인'),
+                child: Text(canTurnIn ? '제출' : '제출 불가'),
               )
             : null, // 진행 중 퀘스트는 로딩 표시 제거
       ),

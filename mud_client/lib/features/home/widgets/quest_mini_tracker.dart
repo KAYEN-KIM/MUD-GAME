@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../state/session_state.dart';
 import '../../../core/models/quest_models.dart';
+import '../../../core/room_names.dart';
 
 class QuestMiniTracker extends StatefulWidget {
   const QuestMiniTracker({super.key});
@@ -12,6 +13,7 @@ class QuestMiniTracker extends StatefulWidget {
 
 class _QuestMiniTrackerState extends State<QuestMiniTracker> {
   bool _isExpanded = false; // 기본적으로 접혀있음
+  bool _isVisible = false; // 기본적으로 숨김
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,54 @@ class _QuestMiniTrackerState extends State<QuestMiniTracker> {
           ...active,
         ];
 
-        final visibleQuests = _isExpanded ? displayQuests : displayQuests.take(3).toList();
+        // 턴인 가능한 퀘스트가 있으면 자동으로 표시, 없으면 기본적으로 숨김
+        if (turninable.isNotEmpty && !_isVisible) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _isVisible = true;
+                _isExpanded = true; // 턴인 가능한 퀘스트가 있으면 자동으로 펼침
+              });
+            }
+          });
+        }
+
+        if (!_isVisible) {
+          // 숨김 상태일 때는 작은 버튼만 표시
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _isVisible = true;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue[200]!),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.track_changes, size: 16, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Text(
+                      '진행 중 퀘스트 ${activeQuests.length}개',
+                      style: TextStyle(fontSize: 12, color: Colors.blue[700]),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(Icons.expand_more, size: 16, color: Colors.blue[700]),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        final visibleQuests = _isExpanded ? displayQuests : displayQuests.take(2).toList();
 
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -73,6 +122,20 @@ class _QuestMiniTrackerState extends State<QuestMiniTracker> {
                         _isExpanded ? Icons.expand_less : Icons.expand_more,
                         size: 16,
                         color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 16),
+                        color: Colors.grey[600],
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () {
+                          setState(() {
+                            _isVisible = false;
+                            _isExpanded = false;
+                          });
+                        },
+                        tooltip: '숨기기',
                       ),
                     ],
                   ),
@@ -128,7 +191,7 @@ class _QuestMiniTrackerState extends State<QuestMiniTracker> {
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     minimumSize: const Size(0, 0),
                   ),
-                  child: const Text('턴인', style: TextStyle(fontSize: 10)),
+                  child: const Text('제출', style: TextStyle(fontSize: 10)),
                 ),
             ],
           ),
@@ -159,7 +222,7 @@ class _QuestMiniTrackerState extends State<QuestMiniTracker> {
             Padding(
               padding: const EdgeInsets.only(top: 2),
               child: Text(
-                '제출: ${quest.turninRoomId}',
+                '제출: ${RoomNames.getName(quest.turninRoomId)}',
                 style: TextStyle(fontSize: 10, color: Colors.orange[700]),
               ),
             ),

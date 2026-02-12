@@ -143,8 +143,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   'Android 에뮬레이터: 10.0.2.2:3000\n'
-                  'Android 실기기: PC의 IP 주소 (예: http://192.168.0.15:3000)\n'
-                  'Desktop/iOS: http://localhost:3000\n\n'
+                  'Android/iOS 실기기: PC IP 자동 감지 (또는 수동 입력)\n'
+                  'Desktop/iOS 시뮬레이터/웹: http://localhost:3000\n\n'
                   '⚠️ 자동 감지가 실패하면 PC IP를 수동으로 입력하세요.\n'
                   '⚠️ PC와 기기가 같은 Wi-Fi에 연결되어 있어야 합니다.',
                   style: TextStyle(fontSize: 12, color: Colors.grey),

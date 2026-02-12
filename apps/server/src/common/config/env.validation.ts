@@ -26,16 +26,16 @@ class EnvironmentVariables {
   TZ: string = 'Asia/Seoul';
 
   @IsString()
-  DATABASE_URL!: string;
+  DATABASE_URL: string = 'file:../data/game.db';
 
   @IsString()
-  REDIS_URL!: string;
+  REDIS_URL: string = '';
 
   @IsString()
-  JWT_SECRET!: string;
+  JWT_SECRET: string = 'mud-game-secret-key-change-in-production';
 
   @IsString()
-  ADMIN_KEY!: string;
+  ADMIN_KEY: string = 'admin-secret-key-change-in-production';
 
   @IsNumber()
   @Min(0)
@@ -85,6 +85,18 @@ class EnvironmentVariables {
   @IsNumber()
   @Min(250)
   COMBAT_TICK_POLL_MS: number = 250;
+
+  @IsNumber()
+  @Min(1)
+  COMBAT_MAX_CATCHUP_TICKS: number = 3;
+
+  @IsNumber()
+  @Min(500)
+  COMBAT_ROUNDTIME_MS_ATTACK: number = 2000;
+
+  @IsNumber()
+  @Min(1000)
+  REDLOCK_TTL_MS: number = 5000;
 
   // Season Policy (Production Default: S1 Only)
   @IsNumber()

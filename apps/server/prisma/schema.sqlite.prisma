@@ -1,0 +1,1394 @@
+﻿// Prisma schema for MUD Game
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Channel {
+  GLOBAL
+  LOCAL
+  PARTY
+  WHISPER
+}
+
+enum LogScope {
+  SYSTEM
+  WORLD
+  COMBAT
+  CHAT
+}
+
+enum AutoPreset {
+  AGGRO
+  GUARD
+  SAVER
+  SUSTAIN
+  SUPPORT
+  RETREAT
+}
+
+enum PartySpeedMode {
+  FAST
+  TACTICAL
+}
+
+enum PartyRole {
+  LEADER
+  MEMBER
+}
+
+enum PunishmentType {
+  MUTE
+  BAN
+}
+
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String?   @unique
+  passwordHash String?
+  createdAt    DateTime  @default(now())
+  
+  characters Character[]
+  
+  @@index([email])
+}
+
+model Character {
+  id                    String    @id @default(cuid())
+  userId                String
+  name                  String    @unique
+  level                 Int       @default(1)
+  exp                   Int       @default(0)
+  hp                    Int       @default(200)
+  hpMax                 Int       @default(200)
+  mp                    Int       @default(200)  // MP = intStat * 10 (기본값)
+  mpMax                 Int       @default(200)  // MP Max = intStat * 10 (기본값)
+  stamina               Int       @default(100)
+  staminaMax            Int       @default(100)
+  str                   Int       @default(20)
+  dex                   Int       @default(20)
+  intStat               Int       @default(20)
+  statPoints            Int       @default(0)   // 미사용 스탯 포인트
+  skillPoints           Int       @default(0)   // 미사용 스킬 포인트
+  gold                  Int       @default(1000)
+  roomId                String
+  lastRestAt            DateTime?
+  cosmeticIconItemId    String?   // Cosmetic icon item ID (e.g., ITEM_ICON_BONUS_S1)
+  cosmeticTitleItemId   String?   // Cosmetic title item ID (e.g., ITEM_TITLE_BONUS_S1)
+  createdAt             DateTime  @default(now())
+  
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room            Room              @relation(fields: [roomId], references: [id])
+  inventory       Inventory[]
+  equipment       Equipment[]
+  partyMembers    PartyMember[]
+  questProgress   QuestProgress[]
+  chatMessages    ChatMessage[]
+  reportsCreated  Report[]          @relation("ReporterCharacter")
+  invitesSent     PartyInvite[]
+  learnedSkills   CharacterSkill[]
+  spellCooldowns  CharacterSpellCooldown[]
+  storyChapters   CharacterStoryChapter[]
+  guildMember     GuildMember?
+  achievements    CharacterAchievement[]
+  roomVisits      CharacterRoomVisit[]
+  tradeOffersSent     TradeOffer[] @relation("TradeFrom")
+  tradeOffersReceived TradeOffer[] @relation("TradeTo")
+  marketplaceListings MarketplaceListing[] @relation("MarketplaceSeller")
+  marketplaceBids     MarketplaceBid[] @relation("MarketplaceBidder")
+  pvpChallenges       PvpMatch[] @relation("PvpChallenger")
+  pvpDefenses         PvpMatch[] @relation("PvpDefender")
+  pvpRanking          PvpRanking?
+  pets                Pet[]
+  house               House?
+  eventParticipations EventParticipation[]
+  dungeonRankings     DungeonRanking[]
+  raidRankings        RaidRanking[]
+  friends             Friend[]          @relation("Friends")
+  friendOf            Friend[]          @relation("FriendOf")
+  blacklists          Blacklist[]       @relation("Blacklists")
+  blockedBy           Blacklist[]        @relation("BlockedBy")
+  sentMails           Mail[]            @relation("SentMails")
+  receivedMails       Mail[]            @relation("ReceivedMails")
+  bestiary            Bestiary[]
+  titles              Title[]
+  collectibles        Collectible[]
+  bankAccount         BankAccount?
+  exchangeListings    ExchangeListing[]
+  
+  @@index([userId])
+  @@index([roomId])
+  @@index([name])
+}
+
+// 스토리 진행(챕터 완료/분기 선택) 저장
+model CharacterStoryChapter {
+  id          String   @id @default(cuid())
+  characterId String
+  chapterId   String
+  completedAt DateTime @default(now())
+  choice      String?  // 시즌 결말 분기(강화/재작성/관리) 등, 추후 확장
+  createdAt   DateTime @default(now())
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, chapterId])
+  @@index([characterId])
+  @@index([chapterId])
+}
+
+model Room {
+  id               String   @id
+  name             String
+  description      String   
+  region           String
+  tags             String?
+  zoneId           String?
+  depth            Int?
+  dangerLevel      Int?
+  recommendedLevel Int?
+  createdAt        DateTime @default(now())
+  
+  characters   Character[]
+  exitsFrom    RoomExit[]    @relation("ExitFrom")
+  exitsTo      RoomExit[]    @relation("ExitTo")
+  spawns       RoomSpawn[]
+  groundItems  RoomGroundItem[]
+  visits       CharacterRoomVisit[]
+  parties      Party[]
+  encounters   Encounter[]
+  chatMessages ChatMessage[]
+  resourceNodes ResourceNode[]
+  nodeSpawns     NodeSpawn[]
+  dungeonEntries  Dungeon[]       @relation("DungeonEntry")
+  raidEntries     Raid[]          @relation("RaidEntry")
+}
+
+model RoomExit {
+  id         String  @id @default(cuid())
+  fromRoomId String
+  toRoomId   String
+  label      String
+  condString   String?
+  minLevel   Int?
+  
+  fromRoom Room @relation("ExitFrom", fields: [fromRoomId], references: [id], onDelete: Cascade)
+  toRoom   Room @relation("ExitTo", fields: [toRoomId], references: [id], onDelete: Cascade)
+  
+  @@unique([fromRoomId, label])
+  @@index([fromRoomId])
+  @@index([toRoomId])
+}
+
+model Monster {
+  id       String @id
+  name     String
+  level    Int
+  hp       Int
+  atk      Int
+  def      Int
+  aiString   String?
+  
+  spawns RoomSpawn[]
+  drops  MonsterDrop[]
+  bestiary Bestiary[]
+}
+
+model RoomSpawn {
+  id        String @id @default(cuid())
+  roomId    String
+  monsterId String
+  weight    Int    @default(100)
+  
+  room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  monster Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  
+  @@unique([roomId, monsterId])
+  @@index([roomId])
+}
+
+model Item {
+  id          String @id
+  name        String
+  type        String // WEAPON, ARMOR, CONSUMABLE
+  rarity      String
+  slot        String? // WEAPON, HEAD, BODY, LEGS, ACCESSORY (null for consumables)
+  stackMax    Int    @default(1)
+  atk         Int    @default(0)
+  def         Int    @default(0)
+  hpBonus     Int    @default(0)
+  priceBuy    Int    @default(50)
+  priceSell   Int    @default(20)
+  effectString  String?
+  
+  inventory Inventory[]
+  equipment Equipment[]
+  drops     MonsterDrop[]
+  groundItems RoomGroundItem[]
+  tradeOfferItems TradeOfferItem[]
+  marketplaceListings MarketplaceListing[]
+  guildVaultItems GuildVaultItem[]
+  houseStorages HouseStorage[]
+  exchangeListings ExchangeListing[]
+}
+
+model RoomGroundItem {
+  id        String   @id @default(cuid())
+  roomId    String
+  itemId    String
+  qty       Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, itemId])
+  @@index([roomId])
+  @@index([itemId])
+}
+
+model Inventory {
+  id          String @id @default(cuid())
+  characterId String
+  itemId      String
+  qty         Int    @default(1)
+  
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([characterId, itemId])
+  @@index([characterId])
+}
+
+model Equipment {
+  id          String @id @default(cuid())
+  characterId String
+  slot        String
+  itemId      String
+  enhanceLevel Int   @default(0) // 강화 레벨 (0~15)
+  
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([characterId, slot])
+  @@index([characterId])
+}
+
+model MonsterDrop {
+  id        String @id @default(cuid())
+  monsterId String
+  itemId    String
+  minQty    Int    @default(1)
+  maxQty    Int    @default(1)
+  chanceBp  Int    @default(10000) // basis points (10000 = 100%)
+  
+  monster Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([monsterId, itemId])
+  @@index([monsterId])
+}
+
+enum QuestProgressStatus {
+  ACTIVE
+  COMPLETED
+  TURNED_IN
+}
+
+model QuestTemplate {
+  id              String @id
+  title           String
+  description     String 
+  giverRoomId     String
+  turninRoomId    String
+  minLevel        Int    @default(1)
+  repeatable      Boolean @default(false)
+  objectivesString  String   // [{type, target, count, zoneId?, roomId?, itemId?, bossId?}]
+  rewardsString     String   // {gold, exp, items:[{itemId, qty}]}
+  
+  progress QuestProgress[]
+}
+
+model QuestProgress {
+  id           String               @id @default(cuid())
+  characterId  String
+  questId      String
+  status       QuestProgressStatus  @default(ACTIVE)
+  progressString String?                // type별 카운터/플래그
+  acceptedAt   DateTime             @default(now())
+  completedAt  DateTime?
+  turnedInAt   DateTime?
+  
+  character Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  quest     QuestTemplate  @relation(fields: [questId], references: [id], onDelete: Cascade)
+  
+  @@unique([characterId, questId])
+  @@index([characterId])
+  @@index([questId])
+  @@index([status])
+}
+
+
+model Party {
+  id                 String          @id @default(cuid())
+  leaderCharacterId  String
+  code               String          @unique // Join code for party (6 chars)
+  roomId             String
+  speedMode          PartySpeedMode  @default(FAST)
+  defaultPreset      AutoPreset      @default(AGGRO)
+  createdAt          DateTime        @default(now())
+  
+  room       Room          @relation(fields: [roomId], references: [id])
+  members    PartyMember[]
+  invites    PartyInvite[]
+  encounters Encounter[]
+  messages   ChatMessage[]
+  dungeonInstances DungeonInstance[]
+  raidInstances   RaidInstance[]
+  
+  @@index([leaderCharacterId])
+  @@index([roomId])
+  @@index([code])
+}
+
+model PartyMember {
+  id          String     @id @default(cuid())
+  partyId     String
+  characterId String
+  role        PartyRole  @default(MEMBER)
+  follow      Boolean    @default(true)
+  autoEnabled Boolean    @default(true)
+  autoPreset  AutoPreset @default(AGGRO)
+  joinedAt    DateTime   @default(now())
+  
+  party     Party     @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  @@unique([partyId, characterId])
+  @@index([partyId])
+  @@index([characterId])
+}
+
+model PartyInvite {
+  id              String       @id @default(cuid())
+  partyId         String
+  fromCharacterId String
+  toCharacterName String
+  status          InviteStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  
+  party         Party     @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  fromCharacter Character @relation(fields: [fromCharacterId], references: [id], onDelete: Cascade)
+  
+  @@index([partyId])
+  @@index([toCharacterName])
+}
+
+model Encounter {
+  id                 String   @id @default(cuid())
+  partyId            String?
+  roomId             String
+  isBoss             Boolean  @default(false)
+  turnNo             Int      @default(0)
+  turnDeadlineAt     DateTime
+  timeBankRemaining  Int      @default(1)
+  stateString          Json
+  createdAt          DateTime @default(now())
+  
+  party Party? @relation(fields: [partyId], references: [id], onDelete: SetNull)
+  room  Room   @relation(fields: [roomId], references: [id])
+  
+  @@index([partyId])
+  @@index([roomId])
+}
+
+model ChatMessage {
+  id              String   @id @default(cuid())
+  channel         Channel
+  roomId          String?
+  partyId         String?
+  fromCharacterId String
+  toName          String?
+  text            String   
+  createdAt       DateTime @default(now())
+  
+  fromCharacter Character @relation(fields: [fromCharacterId], references: [id], onDelete: Cascade)
+  room          Room?     @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  party         Party?    @relation(fields: [partyId], references: [id], onDelete: SetNull)
+  
+  @@index([fromCharacterId])
+  @@index([roomId])
+  @@index([partyId])
+  @@index([createdAt])
+}
+
+model Report {
+  id                    String   @id @default(cuid())
+  reporterCharacterId   String
+  targetName            String
+  reason                String   
+  createdAt             DateTime @default(now())
+  
+  reporterCharacter Character @relation("ReporterCharacter", fields: [reporterCharacterId], references: [id], onDelete: Cascade)
+  
+  @@index([reporterCharacterId])
+  @@index([targetName])
+}
+
+model Punishment {
+  id         String          @id @default(cuid())
+  targetName String
+  type       PunishmentType
+  untilAt    DateTime?
+  note       String          
+  createdAt  DateTime        @default(now())
+  
+  @@index([targetName])
+  @@index([type])
+}
+
+model BossKillLog {
+  id        String   @id @default(cuid())
+  roomId    String
+  bossId    String
+  killedAt  DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roomId, bossId])
+  @@index([roomId])
+}
+
+// ===== TICK-BASED COMBAT SYSTEM =====
+
+enum CombatInstanceState {
+  IDLE
+  ENGAGED
+  RESOLVING
+  ENDED
+}
+
+enum CombatEntityType {
+  PLAYER
+  MONSTER
+}
+
+enum CombatActionType {
+  ATTACK
+  USE_ITEM
+  FLEE
+  CAST
+}
+
+model CombatInstance {
+  id         String               @id @default(cuid())
+  roomId     String
+  state      CombatInstanceState  @default(IDLE)
+  tick       Int                  @default(0)
+  nextTickAt DateTime
+  seed       Int?                 // RNG seed for determinism
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  
+  combatants CombatCombatant[]
+  actions    CombatActionQueue[]
+  
+  @@index([nextTickAt, state])
+  @@index([roomId])
+}
+
+model CombatCombatant {
+  id                String           @id @default(cuid())
+  instanceId        String
+  entityType        CombatEntityType
+  entityId          String           // characterId or monsterId
+  hp                Int
+  mp                Int              @default(0)
+  maxHp             Int
+  maxMp             Int              @default(0)
+  statsSnapshot     String?            // {atk, def, spd, ...}
+  nextActionAt      DateTime
+  nextAutoAttackAt  DateTime
+  targetId          String?          // combatantId of target
+  status            String             @default("{}")
+  casting           String?            // {skillId, finishAt, ...}
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  instance CombatInstance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  actions  CombatActionQueue[]
+  
+  @@index([instanceId])
+  @@index([entityType, entityId])
+}
+
+model CombatActionQueue {
+  id           String           @id @default(cuid())
+  instanceId   String
+  combatantId  String
+  seq          Int              @default(0)
+  type         CombatActionType
+  payload      String             @default("{}")
+  reqId        String           // for idempotency
+  createdAt    DateTime         @default(now())
+  
+  instance   CombatInstance    @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  combatant  CombatCombatant   @relation(fields: [combatantId], references: [id], onDelete: Cascade)
+  
+  @@unique([reqId, combatantId])
+  @@index([combatantId, seq])
+  @@index([instanceId])
+}
+
+// ===== META SYSTEMS (GUILD / TRADE / ACHIEVEMENTS / EXPLORATION) =====
+
+enum TradeOfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+model Guild {
+  id               String   @id @default(cuid())
+  name             String   @unique
+  description      String   
+  level            Int      @default(1)
+  exp              Int      @default(0)
+  maxMembers       Int      @default(30)
+  leaderCharacterId String
+  vaultGold        Int      @default(0) // 길드 금고 골드
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  members GuildMember[]
+  vaultItems GuildVaultItem[]
+  buff GuildBuff?
+  warsAsChallenger GuildWar[] @relation("GuildWarChallenger")
+  warsAsDefender GuildWar[] @relation("GuildWarDefender")
+  quests GuildQuest[]
+
+  @@index([leaderCharacterId])
+  @@index([level])
+}
+
+model GuildMember {
+  id          String   @id @default(cuid())
+  guildId     String
+  characterId String
+  role        String   @default("MEMBER") // LEADER / OFFICER / MEMBER
+  joinedAt    DateTime @default(now())
+
+  guild     Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, characterId])
+  @@unique([characterId])
+  @@index([guildId])
+}
+
+model CharacterAchievement {
+  id            String   @id @default(cuid())
+  characterId   String
+  achievementId String
+  progress      Int      @default(0)
+  target        Int      @default(1)
+  // NOTE: 클라 UI 로직이 completedAt==null일 때 '보상 받기'를 띄우는 구조라,
+  //       여기서는 completedAt을 '보상 수령 시각'으로 사용한다(실제 완료는 target 달성 시점).
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, achievementId])
+  @@index([characterId])
+}
+
+model CharacterRoomVisit {
+  id          String   @id @default(cuid())
+  characterId String
+  roomId      String
+  firstSeenAt DateTime @default(now())
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, roomId])
+  @@index([characterId])
+  @@index([roomId])
+}
+
+model TradeOffer {
+  id              String           @id @default(cuid())
+  fromCharacterId String
+  toCharacterId   String
+  offeredGold     Int              @default(0)
+  status          TradeOfferStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  fromCharacter Character        @relation("TradeFrom", fields: [fromCharacterId], references: [id], onDelete: Cascade)
+  toCharacter   Character        @relation("TradeTo", fields: [toCharacterId], references: [id], onDelete: Cascade)
+  items         TradeOfferItem[]
+
+  @@index([fromCharacterId])
+  @@index([toCharacterId])
+  @@index([status, createdAt])
+}
+
+model TradeOfferItem {
+  id      String @id @default(cuid())
+  offerId String
+  itemId  String
+  qty     Int    @default(1)
+
+  offer TradeOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  item  Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([offerId])
+  @@index([itemId])
+}
+
+// ===== MARKETPLACE (A) =====
+
+enum MarketplaceListingStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+model MarketplaceListing {
+  id              String                    @id @default(cuid())
+  sellerCharacterId String
+  itemId          String
+  qty             Int                       @default(1)
+  startingPrice   Int                       // 시작가 (최소 입찰가)
+  buyNowPrice     Int?                      // 즉시구매가 (null이면 입찰만)
+  currentBid      Int?                      // 현재 최고 입찰가
+  currentBidderId String?                   // 현재 최고 입찰자
+  status          MarketplaceListingStatus  @default(ACTIVE)
+  expiresAt       DateTime                  // 만료 시간
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  sellerCharacter Character        @relation("MarketplaceSeller", fields: [sellerCharacterId], references: [id], onDelete: Cascade)
+  item            Item             @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  bids            MarketplaceBid[]
+
+  @@index([sellerCharacterId])
+  @@index([itemId])
+  @@index([status, expiresAt])
+  @@index([status, createdAt])
+}
+
+model MarketplaceBid {
+  id              String            @id @default(cuid())
+  listingId       String
+  bidderCharacterId String
+  bidAmount       Int
+  createdAt       DateTime          @default(now())
+
+  listing MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  bidder Character          @relation("MarketplaceBidder", fields: [bidderCharacterId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, createdAt])
+  @@index([bidderCharacterId])
+}
+
+// ===== GATHERING (C) =====
+
+model ResourceNode {
+  id          String   @id @default(cuid())
+  roomId      String
+  nodeType    String   // ORE_IRON, ORE_GOLD, HERB_RED, TREE_OAK 등
+  maxHp       Int      @default(100)
+  currentHp   Int      @default(100)
+  respawnAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, nodeType])
+  @@index([roomId])
+  @@index([respawnAt])
+}
+
+model NodeSpawn {
+  id          String   @id @default(cuid())
+  roomId      String
+  nodeType    String
+  spawnChance Int      @default(10000) // basis points (10000 = 100%)
+  minHp       Int      @default(100)
+  maxHp       Int      @default(100)
+  respawnMinutes Int   @default(60)
+  createdAt   DateTime @default(now())
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, nodeType])
+  @@index([roomId])
+}
+
+// ===== PVP (E) =====
+
+enum PvpMatchStatus {
+  PENDING
+  ACTIVE
+  FINISHED
+  CANCELLED
+}
+
+model PvpMatch {
+  id          String         @id @default(cuid())
+  challengerId String
+  defenderId   String
+  betGold      Int            @default(0)
+  status       PvpMatchStatus @default(PENDING)
+  winnerId     String?
+  finishedAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  challenger Character @relation("PvpChallenger", fields: [challengerId], references: [id], onDelete: Cascade)
+  defender   Character @relation("PvpDefender", fields: [defenderId], references: [id], onDelete: Cascade)
+
+  @@index([challengerId])
+  @@index([defenderId])
+  @@index([status, createdAt])
+}
+
+model PvpRanking {
+  id          String   @id @default(cuid())
+  characterId String   @unique
+  rating      Int      @default(1000)
+  wins        Int      @default(0)
+  losses      Int      @default(0)
+  draws       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([rating])
+}
+
+// ===== GUILD CONTENT EXPANSION =====
+
+model GuildVaultItem {
+  id          String   @id @default(cuid())
+  guildId     String
+  itemId      String
+  qty         Int      @default(1)
+  depositedBy String   // 기여한 캐릭터 ID
+  depositedAt DateTime @default(now())
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  item  Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, itemId])
+  @@index([guildId])
+  @@index([depositedBy])
+}
+
+model GuildBuff {
+  id          String   @id @default(cuid())
+  guildId     String   @unique
+  expBonus    Int      @default(0) // 경험치 보너스 (%)
+  goldBonus   Int      @default(0) // 골드 보너스 (%)
+  atkBonus    Int      @default(0) // 공격력 보너스 (%)
+  defBonus    Int      @default(0) // 방어력 보너스 (%)
+  hpBonus     Int      @default(0) // HP 보너스 (%)
+  updatedAt   DateTime @updatedAt
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+enum GuildWarStatus {
+  PENDING
+  ACTIVE
+  FINISHED
+  CANCELLED
+}
+
+model GuildWar {
+  id          String         @id @default(cuid())
+  challengerGuildId String
+  defenderGuildId   String
+  status      GuildWarStatus @default(PENDING)
+  startAt     DateTime?
+  endAt       DateTime?
+  winnerGuildId String?
+  challengerScore Int        @default(0)
+  defenderScore   Int        @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  challengerGuild Guild @relation("GuildWarChallenger", fields: [challengerGuildId], references: [id], onDelete: Cascade)
+  defenderGuild   Guild @relation("GuildWarDefender", fields: [defenderGuildId], references: [id], onDelete: Cascade)
+  matches         GuildWarMatch[]
+
+  @@index([challengerGuildId])
+  @@index([defenderGuildId])
+  @@index([status, createdAt])
+}
+
+model GuildWarMatch {
+  id          String   @id @default(cuid())
+  warId      String
+  challengerCharacterId String
+  defenderCharacterId   String
+  winnerId   String?
+  finishedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  war        GuildWar @relation(fields: [warId], references: [id], onDelete: Cascade)
+
+  @@index([warId])
+  @@index([challengerCharacterId])
+  @@index([defenderCharacterId])
+}
+
+model GuildQuest {
+  id          String   @id @default(cuid())
+  guildId     String
+  questId     String   // 퀘스트 템플릿 ID
+  status      String   @default("ACTIVE") // ACTIVE / COMPLETED
+  progress    Int      @default(0)
+  target      Int      @default(1)
+  acceptedAt  DateTime @default(now())
+  completedAt DateTime?
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, questId])
+  @@index([guildId])
+  @@index([status])
+}
+
+// ===== SKILL SYSTEM =====
+
+model CharacterSkill {
+  id          String   @id @default(cuid())
+  characterId String
+  skillId     String
+  level       Int      @default(1)
+  learnedAt   DateTime @default(now())
+  lastUsedAt  DateTime? // 쿨다운 체크용
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, skillId])
+  @@index([characterId])
+  @@index([skillId])
+}
+
+model CharacterSpellCooldown {
+  id          String   @id @default(cuid())
+  characterId String
+  spellId     String
+  lastUsedAt  DateTime @default(now())
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, spellId])
+  @@index([characterId])
+  @@index([spellId])
+}
+
+// ===== DUNGEON & RAID SYSTEM =====
+
+enum DungeonDifficulty {
+  EASY
+  NORMAL
+  HARD
+  NIGHTMARE
+}
+
+model Dungeon {
+  id              String           @id @default(cuid())
+  name            String
+  description     String           
+  entryRoomId     String           // 입장 룸 ID
+  minLevel        Int              @default(1)
+  maxLevel        Int              @default(100)
+  requiredPartySize Int            @default(1) // 최소 파티 인원
+  maxPartySize    Int              @default(6) // 최대 파티 인원
+  roomCount       Int              @default(5) // 던전 내 방 개수
+  expMultiplier   Float            @default(1.0) // 경험치 배율
+  goldMultiplier  Float            @default(1.0) // 골드 배율
+  itemDropMultiplier Float         @default(1.0) // 아이템 드롭 배율
+  createdAt       DateTime         @default(now())
+
+  entryRoom Room @relation("DungeonEntry", fields: [entryRoomId], references: [id])
+  instances DungeonInstance[]
+
+  @@index([entryRoomId])
+  @@index([minLevel, maxLevel])
+}
+
+model DungeonInstance {
+  id              String           @id @default(cuid())
+  dungeonId       String
+  difficulty      DungeonDifficulty @default(NORMAL)
+  partyId         String           // 파티 ID
+  currentRoomId   String           // 현재 진행 중인 룸
+  clearedRooms    String             // 클리어한 룸 목록 (roomId 배열)
+  status          String           @default("ACTIVE") // ACTIVE / COMPLETED / FAILED
+  startedAt       DateTime         @default(now())
+  completedAt     DateTime?
+
+  dungeon Dungeon @relation(fields: [dungeonId], references: [id], onDelete: Cascade)
+  party   Party   @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([dungeonId])
+  @@index([partyId])
+  @@index([status])
+}
+
+model Raid {
+  id              String           @id @default(cuid())
+  name            String
+  description     String           
+  entryRoomId     String
+  minLevel        Int              @default(1)
+  maxLevel        Int              @default(100)
+  requiredPartySize Int            @default(10) // 최소 파티 인원
+  maxPartySize    Int              @default(20) // 최대 파티 인원
+  roomCount       Int              @default(10) // 레이드 내 방 개수
+  bossCount       Int              @default(3) // 보스 개수
+  expMultiplier   Float            @default(2.0)
+  goldMultiplier  Float            @default(2.0)
+  itemDropMultiplier Float         @default(3.0)
+  createdAt       DateTime         @default(now())
+
+  entryRoom Room @relation("RaidEntry", fields: [entryRoomId], references: [id])
+  instances RaidInstance[]
+
+  @@index([entryRoomId])
+}
+
+model RaidInstance {
+  id              String           @id @default(cuid())
+  raidId          String
+  partyId         String           // 파티 ID (대규모 파티)
+  currentRoomId   String
+  clearedRooms    Json
+  defeatedBosses  String             // 처치한 보스 목록
+  status          String           @default("ACTIVE")
+  startedAt       DateTime         @default(now())
+  completedAt     DateTime?
+
+  raid  Raid  @relation(fields: [raidId], references: [id], onDelete: Cascade)
+  party Party @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([raidId])
+  @@index([partyId])
+  @@index([status])
+}
+
+// ===== PET/COMPANION SYSTEM =====
+
+enum PetType {
+  COMBAT
+  GATHERING
+  TRADING
+  EXPLORATION
+}
+
+enum PetRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model Pet {
+  id          String     @id @default(cuid())
+  characterId String
+  name        String
+  type        PetType
+  rarity      PetRarity
+  level       Int        @default(1)
+  exp         Int        @default(0)
+  hp          Int        @default(100)
+  hpMax       Int        @default(100)
+  atk         Int        @default(10)
+  def         Int        @default(5)
+  skills      String?      // Pet skills JSON
+  isActive    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([characterId])
+  @@index([type, rarity])
+}
+
+// ===== HOUSING/FARM SYSTEM =====
+
+model House {
+  id          String   @id @default(cuid())
+  characterId String   @unique
+  name        String
+  level       Int      @default(1)
+  capacity    Int      @default(10) // Storage capacity
+  location    String?  // Room ID where house is located
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  farmPlots FarmPlot[]
+  storage    HouseStorage[]
+
+  @@index([characterId])
+}
+
+model FarmPlot {
+  id        String   @id @default(cuid())
+  houseId   String
+  plotIndex Int      // Plot position (0-9)
+  cropId    String?  // Item ID of planted crop
+  plantedAt DateTime?
+  harvestAt DateTime?
+  status    String   @default("EMPTY") // EMPTY, PLANTED, GROWING, READY
+
+  house House @relation(fields: [houseId], references: [id], onDelete: Cascade)
+
+  @@unique([houseId, plotIndex])
+  @@index([houseId])
+}
+
+model HouseStorage {
+  id          String @id @default(cuid())
+  houseId     String
+  itemId      String
+  qty         Int    @default(1)
+
+  house House @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  item  Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([houseId, itemId])
+  @@index([houseId])
+}
+
+// ===== EVENT SYSTEM =====
+
+enum EventType {
+  DAILY
+  WEEKLY
+  SEASONAL
+  LIMITED
+}
+
+enum EventStatus {
+  UPCOMING
+  ACTIVE
+  ENDED
+}
+
+model Event {
+  id          String      @id @default(cuid())
+  name        String
+  description String      
+  type        EventType
+  status      EventStatus @default(UPCOMING)
+  startAt     DateTime
+  endAt       DateTime
+  rewardsString String?      // Event rewards configuration
+  configString  String?      // Event-specific configuration
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  participations EventParticipation[]
+
+  @@index([status, startAt, endAt])
+  @@index([type])
+}
+
+model EventParticipation {
+  id        String   @id @default(cuid())
+  eventId   String
+  characterId String
+  progress  String     // Event progress tracking
+  claimedRewards String? // Claimed reward IDs
+  joinedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, characterId])
+  @@index([eventId])
+  @@index([characterId])
+}
+
+// ===== RANKING SYSTEM EXPANSION =====
+
+model DungeonRanking {
+  id          String   @id @default(cuid())
+  characterId String   @unique
+  dungeonId   String
+  difficulty  String
+  bestTime    Int?     // Best clear time in seconds
+  clearCount  Int      @default(0)
+  totalExp    Int      @default(0)
+  totalGold   Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([dungeonId, difficulty, bestTime])
+  @@index([characterId])
+}
+
+model RaidRanking {
+  id          String   @id @default(cuid())
+  characterId String
+  raidId      String
+  clearCount  Int      @default(0)
+  bestTime    Int?     // Best clear time in seconds
+  totalExp    Int      @default(0)
+  totalGold   Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, raidId])
+  @@index([raidId, clearCount])
+  @@index([characterId])
+}
+
+// ===== SOCIAL SYSTEM =====
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+model Friend {
+  id          String       @id @default(cuid())
+  characterId String
+  friendId    String
+  status      FriendStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  character Character @relation("Friends", fields: [characterId], references: [id], onDelete: Cascade)
+  friend    Character @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, friendId])
+  @@index([characterId])
+  @@index([friendId])
+  @@index([status])
+}
+
+model Blacklist {
+  id          String   @id @default(cuid())
+  characterId String
+  blockedId   String
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  character Character @relation("Blacklists", fields: [characterId], references: [id], onDelete: Cascade)
+  blocked   Character @relation("BlockedBy", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, blockedId])
+  @@index([characterId])
+  @@index([blockedId])
+}
+
+enum MailStatus {
+  UNREAD
+  READ
+  DELETED
+}
+
+model Mail {
+  id          String     @id @default(cuid())
+  fromId     String?
+  toId       String
+  subject    String
+  content    String     
+  gold       Int        @default(0)
+  itemsString  String?      // [{itemId, qty}]
+  status     MailStatus @default(UNREAD)
+  sentAt     DateTime   @default(now())
+  readAt     DateTime?
+  deletedAt  DateTime?
+
+  from Character? @relation("SentMails", fields: [fromId], references: [id], onDelete: SetNull)
+  to   Character  @relation("ReceivedMails", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@index([toId])
+  @@index([fromId])
+  @@index([status])
+  @@index([sentAt])
+}
+
+// ===== COLLECTION SYSTEM =====
+
+model Bestiary {
+  id          String   @id @default(cuid())
+  characterId String
+  monsterId   String
+  killCount   Int      @default(0)
+  firstKillAt DateTime?
+  lastKillAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  monster   Monster   @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, monsterId])
+  @@index([characterId])
+  @@index([monsterId])
+}
+
+model Title {
+  id          String   @id @default(cuid())
+  characterId String
+  titleId     String
+  unlockedAt  DateTime @default(now())
+  isActive    Boolean  @default(false)
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, titleId])
+  @@index([characterId])
+  @@index([titleId])
+}
+
+model Collectible {
+  id          String   @id @default(cuid())
+  characterId String
+  collectibleId String
+  qty         Int      @default(1)
+  obtainedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, collectibleId])
+  @@index([characterId])
+  @@index([collectibleId])
+}
+
+// ===== ECONOMY SYSTEM EXPANSION =====
+
+model BankAccount {
+  id          String   @id @default(cuid())
+  characterId String   @unique
+  balance     Int      @default(0)
+  interestRate Float   @default(0.01) // 1% daily interest
+  lastInterestAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  transactions BankTransaction[]
+
+  @@index([characterId])
+}
+
+enum BankTransactionType {
+  DEPOSIT
+  WITHDRAW
+  INTEREST
+  TRANSFER
+}
+
+model BankTransaction {
+  id          String              @id @default(cuid())
+  accountId   String
+  type        BankTransactionType
+  amount      Int
+  balanceAfter Int
+  description String?
+  createdAt   DateTime            @default(now())
+
+  account BankAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model ExchangeListing {
+  id          String   @id @default(cuid())
+  itemId      String
+  sellerId    String
+  price       Int      // Price per unit
+  qty         Int      @default(1)
+  totalPrice  Int      // Total price (price * qty)
+  status      String   @default("ACTIVE") // ACTIVE, SOLD, CANCELLED
+  createdAt   DateTime @default(now())
+  soldAt      DateTime?
+
+  item   Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  seller Character @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([price])
+  @@index([createdAt])
+}
+
+// ===== ADMIN TOOLS =====
+
+enum AdminActionType {
+  PUNISHMENT
+  ITEM_GRANT
+  GOLD_GRANT
+  LEVEL_SET
+  CHARACTER_MODIFY
+  CONTENT_UPDATE
+}
+
+model AdminLog {
+  id          String          @id @default(cuid())
+  adminId     String
+  actionType  AdminActionType
+  targetId    String?         // Character ID or other target
+  description String          
+  metadata    String?
+  createdAt   DateTime        @default(now())
+
+  @@index([adminId])
+  @@index([actionType])
+  @@index([targetId])
+  @@index([createdAt])
+}
+
+model GameStat {
+  id          String   @id @default(cuid())
+  statKey     String
+  statValue   Json
+  recordedAt  DateTime @default(now())
+
+  @@unique([statKey, recordedAt])
+  @@index([statKey])
+  @@index([recordedAt])
+}
+
+

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Character" ADD COLUMN "statPoints" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "Character" ADD COLUMN "skillPoints" INTEGER NOT NULL DEFAULT 0;

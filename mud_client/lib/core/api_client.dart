@@ -74,7 +74,8 @@ class ApiClient {
       print('[ApiClient] Login response status: ${response.statusCode}');
       print('[ApiClient] Login response body: ${response.body}');
 
-      if (response.statusCode == 200) {
+      // NestJS POST는 기본 201을 반환할 수 있어(특히 login), 200/201 모두 성공으로 취급
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       } else {
         final errorBody = response.body;

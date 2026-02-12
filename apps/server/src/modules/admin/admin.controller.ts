@@ -39,5 +39,25 @@ export class AdminController {
     }
     return this.adminService.searchCharacters(name);
   }
+
+  @Get('stats')
+  async getStats() {
+    return this.adminService.getStats();
+  }
+
+  @Get('logs')
+  async getAdminLogs(@Query('limit') limit?: string) {
+    return this.adminService.getAdminLogs(limit ? parseInt(limit) : 100);
+  }
+
+  @Get('game-stats/:key')
+  async getGameStats(@Param('key') key: string, @Query('limit') limit?: string) {
+    return this.adminService.getGameStats(key, limit ? parseInt(limit) : 100);
+  }
+
+  @Post('game-stats')
+  async recordGameStat(@Body() body: { key: string; value: any }) {
+    return this.adminService.recordGameStat(body.key, body.value);
+  }
 }
 

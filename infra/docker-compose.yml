@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: mud
       POSTGRES_PASSWORD: mudpass
     ports:
-      - "5432:5432"
+      - "15432:5432"  # 외부 포트를 15432로 변경 (Windows 포트 예약 문제 회피)
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

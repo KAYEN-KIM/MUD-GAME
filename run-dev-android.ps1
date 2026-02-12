@@ -36,6 +36,10 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 Write-Host "[OK] Infrastructure started" -ForegroundColor Green
+
+# DATABASE_URL 환경 변수 설정 (포트 15432 사용)
+$env:DATABASE_URL = "postgresql://mud:mudpass@localhost:15432/mud"
+Write-Host "[INFO] DATABASE_URL set to port 15432" -ForegroundColor Cyan
 Write-Host ""
 
 # 2. DB 대기
@@ -111,6 +115,9 @@ Write-Host ""
 # 5. 서버 실행 (새 창)
 Write-Host "[5/6] Starting server..." -ForegroundColor Yellow
 
+# DATABASE_URL 환경 변수 설정 (포트 15432 사용)
+$env:DATABASE_URL = "postgresql://mud:mudpass@localhost:15432/mud"
+
 # 기존 서버 프로세스 종료 (포트 3000 사용 중인 프로세스)
 Write-Host "[INFO] Checking for existing server processes on port 3000..." -ForegroundColor Cyan
 try {
@@ -139,7 +146,7 @@ try {
 }
 
 Write-Host "Server will run in a new PowerShell window." -ForegroundColor Cyan
-$serverCommand = "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; `$OutputEncoding = [System.Text.Encoding]::UTF8; chcp 65001 | Out-Null; cd '$scriptDir'; pnpm dev"
+$serverCommand = "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; `$OutputEncoding = [System.Text.Encoding]::UTF8; chcp 65001 | Out-Null; `$env:DATABASE_URL='postgresql://mud:mudpass@localhost:15432/mud'; cd '$scriptDir'; pnpm dev"
 Start-Process powershell -ArgumentList "-NoExit", "-Command", $serverCommand
 Start-Sleep -Seconds 3
 

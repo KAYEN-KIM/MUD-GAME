@@ -16,8 +16,9 @@ dependencies:
   # WebSocket
   web_socket_channel: ^2.4.0
   
-  # Secure Storage
-  flutter_secure_storage: ^9.0.0
+  # Secure Storage (Windows에서는 shared_preferences 사용)
+  # flutter_secure_storage: ^10.0.0  # Windows ATL 문제로 임시 제외
+  shared_preferences: ^2.2.2
   
   # State Management
   provider: ^6.1.1

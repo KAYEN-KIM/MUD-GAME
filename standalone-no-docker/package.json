@@ -1,0 +1,13 @@
+{
+  "name": "mud-game-standalone",
+  "version": "1.0.0",
+  "description": "MUD 게임 독립 실행형 패키지 (Docker 불필요)",
+  "scripts": {
+    "build:server": "cd ../apps/server && npm run build",
+    "build:client": "cd ../mud_client && flutter build windows --release",
+    "package": "node package-standalone.js"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}

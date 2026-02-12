@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 데이터베이스
+  postgres:
+    image: postgres:16-alpine
+    container_name: mud-postgres
+    environment:
+      POSTGRES_DB: mud
+      POSTGRES_USER: mud
+      POSTGRES_PASSWORD: mudpass
+    ports:
+      - "15432:5432"  # 외부 포트를 15432로 변경 (Windows 포트 예약 문제 회피)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - mud-network
+
+  # Redis 캐시
+  redis:
+    image: redis:7-alpine
+    container_name: mud-redis
+    ports:
+      - "16379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - mud-network
+
+  # 게임 서버
+  server:
+    build:
+      context: ..
+      dockerfile: apps/server/Dockerfile
+    container_name: mud-server
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://mud:mudpass@postgres:5432/mud
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: mud-game-secret-key-change-in-production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mud-network
+    command: >
+      sh -c "
+        echo '서비스 준비 대기 중...' &&
+        sleep 10 &&
+        echo '데이터베이스 마이그레이션 시작...' &&
+        cd apps/server &&
+        prisma migrate deploy &&
+        echo '시드 데이터 생성...' &&
+        prisma db seed &&
+        echo '서버 시작...' &&
+        node dist/main.js
+      "
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  mud-network:
+    driver: bridge

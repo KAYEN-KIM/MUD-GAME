@@ -10,12 +10,48 @@ import '../inventory/inventory_screen.dart';
 import '../shop/shop_screen.dart';
 import '../quest/quest_screen.dart';
 import '../party/party_screen.dart';
+import '../skill/skill_screen.dart';
+import '../dungeon/dungeon_screen.dart';
+import '../trade/trade_screen.dart';
+import '../guild/guild_screen.dart';
+import '../enhancement/enhancement_screen.dart';
+import '../crafting/crafting_screen.dart';
+import '../achievement/achievement_screen.dart';
+import '../story/story_screen.dart';
+import '../story/npc_screen.dart';
 import 'widgets/log_view.dart';
 import 'widgets/quest_mini_tracker.dart';
 import 'widgets/action_bar.dart';
+import 'widgets/command_bar.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _autoConnectAttempted = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // 토큰이 있으면 홈으로 들어오는데, 기존 UX는 사용자가 Connect를 눌러야 WS가 연결됨.
+    // MUD UX: 홈 진입 시 자동 연결 1회 시도.
+    if (_autoConnectAttempted) return;
+    _autoConnectAttempted = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final session = context.read<SessionState>();
+      if (session.token != null &&
+          session.connectionStatus == ConnectionStatus.disconnected) {
+        await session.connect();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,6 +217,26 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.menu_book),
+            tooltip: '메인 스토리',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const StoryScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            tooltip: 'NPC 대화',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NPCScreen()),
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.push(
@@ -301,9 +357,15 @@ class HomeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 10,
                             fontFamily: 'monospace',
-                            color: (gs.hp != null && gs.hpMax != null && gs.hp! < gs.hpMax! * 0.3)
-                                ? Colors.red[700]
-                                : Colors.green[700],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'MP: ${gs.mp ?? 0}/${gs.mpMax ?? 0}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontFamily: 'monospace',
+                            color: Colors.blue,
                           ),
                         ),
                       ],
@@ -438,6 +500,8 @@ class HomeScreen extends StatelessWidget {
           Expanded(
             child: LogView(),
           ),
+          // 커맨드 입력 (MUD 스타일)
+          const CommandBar(),
           // 액션 바
           const ActionBar(),
         ],

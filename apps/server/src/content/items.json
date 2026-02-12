@@ -1,19 +1,5 @@
 [
   {
-    "id": "ITEM_MAT_LEATHER",
-    "name": "가죽",
-    "type": "material",
-    "rarity": "common",
-    "slot": null,
-    "stackMax": 999,
-    "atk": 0,
-    "def": 0,
-    "hpBonus": 0,
-    "priceBuy": 5,
-    "priceSell": 2,
-    "effectJson": {}
-  },
-  {
     "id": "ITEM_MAT_ORE_IRON",
     "name": "철광석",
     "type": "material",
@@ -25,7 +11,7 @@
     "hpBonus": 0,
     "priceBuy": 15,
     "priceSell": 6,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_SWORD_IRON",
@@ -39,7 +25,7 @@
     "hpBonus": 0,
     "priceBuy": 150,
     "priceSell": 60,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_SWORD_MITHRIL",
@@ -53,7 +39,7 @@
     "hpBonus": 0,
     "priceBuy": 1000,
     "priceSell": 400,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_MAT_DRAGON_SCALE",
@@ -67,7 +53,7 @@
     "hpBonus": 0,
     "priceBuy": 500,
     "priceSell": 200,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_POTION_HP_S",
@@ -81,9 +67,35 @@
     "hpBonus": 0,
     "priceBuy": 30,
     "priceSell": 10,
-    "effectJson": {
-      "heal": 50
-    }
+    "effectString": null
+  },
+  {
+    "id": "ITEM_MP_POTION",
+    "name": "마나 포션",
+    "type": "consumable",
+    "rarity": "common",
+    "slot": null,
+    "stackMax": 99,
+    "atk": 0,
+    "def": 0,
+    "hpBonus": 0,
+    "priceBuy": 30,
+    "priceSell": 10,
+    "effectString": null
+  },
+  {
+    "id": "ITEM_ELIXIR",
+    "name": "만능 엘릭서",
+    "type": "consumable",
+    "rarity": "rare",
+    "slot": null,
+    "stackMax": 20,
+    "atk": 0,
+    "def": 0,
+    "hpBonus": 0,
+    "priceBuy": 100,
+    "priceSell": 40,
+    "effectString": null
   },
   {
     "id": "ITEM_POTION_STAMINA",
@@ -97,9 +109,7 @@
     "hpBonus": 0,
     "priceBuy": 40,
     "priceSell": 15,
-    "effectJson": {
-      "stamina": 100
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_ACC_GATE_ANCHOR_SIGIL_S1",
@@ -113,7 +123,7 @@
     "hpBonus": 30,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ACC_RIFT_TAG_PENDANT_S1",
@@ -127,7 +137,7 @@
     "hpBonus": 15,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_MAT_ESSENCE",
@@ -141,7 +151,7 @@
     "hpBonus": 0,
     "priceBuy": 100,
     "priceSell": 40,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ACC_RUNNER_SEAL_RING_S1",
@@ -155,7 +165,7 @@
     "hpBonus": 10,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ACC_WARDEN_SHARD_CHARM_S1",
@@ -169,7 +179,7 @@
     "hpBonus": 25,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S05",
@@ -183,7 +193,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_RING_DEX",
@@ -197,9 +207,7 @@
     "hpBonus": 0,
     "priceBuy": 200,
     "priceSell": 80,
-    "effectJson": {
-      "dex": 3
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_RING_INT",
@@ -213,9 +221,7 @@
     "hpBonus": 0,
     "priceBuy": 200,
     "priceSell": 80,
-    "effectJson": {
-      "int": 3
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_SWORD_STEEL",
@@ -229,7 +235,7 @@
     "hpBonus": 0,
     "priceBuy": 400,
     "priceSell": 160,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S02",
@@ -243,7 +249,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S06",
@@ -257,7 +263,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S10",
@@ -271,7 +277,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_MAT_ORE_MITHRIL",
@@ -285,7 +291,7 @@
     "hpBonus": 0,
     "priceBuy": 50,
     "priceSell": 20,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S03",
@@ -299,7 +305,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_SWORD_WOOD",
@@ -313,7 +319,7 @@
     "hpBonus": 0,
     "priceBuy": 50,
     "priceSell": 20,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S07",
@@ -327,7 +333,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S08",
@@ -341,7 +347,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S09",
@@ -355,7 +361,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S1",
@@ -369,7 +375,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BOSS_S1_RESIDUE_BROKER",
@@ -383,7 +389,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_LEDGER_SEAL_S1",
@@ -397,7 +403,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S04",
@@ -411,7 +417,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S05",
@@ -425,7 +431,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S06",
@@ -439,7 +445,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_MAT_BONE",
@@ -453,7 +459,7 @@
     "hpBonus": 0,
     "priceBuy": 5,
     "priceSell": 2,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_SCROLL_RETURN",
@@ -467,9 +473,7 @@
     "hpBonus": 0,
     "priceBuy": 100,
     "priceSell": 40,
-    "effectJson": {
-      "teleport": "GH_GATE"
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_STAFF_MAGIC",
@@ -483,9 +487,7 @@
     "hpBonus": 0,
     "priceBuy": 500,
     "priceSell": 200,
-    "effectJson": {
-      "int": 5
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_WEAPON_BROKER_BLADE_S1",
@@ -499,7 +501,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_MAT_CLOTH",
@@ -513,7 +515,7 @@
     "hpBonus": 0,
     "priceBuy": 3,
     "priceSell": 1,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_POTION_HP_L",
@@ -527,9 +529,7 @@
     "hpBonus": 0,
     "priceBuy": 200,
     "priceSell": 80,
-    "effectJson": {
-      "heal": 300
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_POTION_HP_M",
@@ -543,9 +543,7 @@
     "hpBonus": 0,
     "priceBuy": 80,
     "priceSell": 30,
-    "effectJson": {
-      "heal": 150
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S1",
@@ -559,7 +557,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_RUNNER_S1",
@@ -573,7 +571,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_WEAPON_LEDGER_DAGGER_S1",
@@ -587,7 +585,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_AMULET_HP",
@@ -601,7 +599,7 @@
     "hpBonus": 50,
     "priceBuy": 450,
     "priceSell": 180,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ARMOR_CHAIN",
@@ -615,7 +613,7 @@
     "hpBonus": 40,
     "priceBuy": 350,
     "priceSell": 140,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_RING_STR",
@@ -629,9 +627,7 @@
     "hpBonus": 0,
     "priceBuy": 200,
     "priceSell": 80,
-    "effectJson": {
-      "str": 3
-    }
+    "effectString": null
   },
   {
     "id": "ITEM_LEDGER_STAMP_S1",
@@ -645,7 +641,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ARMOR_CLOTH",
@@ -659,7 +655,7 @@
     "hpBonus": 10,
     "priceBuy": 40,
     "priceSell": 15,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ARMOR_LEATHER",
@@ -673,7 +669,7 @@
     "hpBonus": 20,
     "priceBuy": 120,
     "priceSell": 50,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ARMOR_PLATE",
@@ -687,7 +683,7 @@
     "hpBonus": 80,
     "priceBuy": 900,
     "priceSell": 360,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_BODY_RESIDUE_COAT_S1",
@@ -701,7 +697,7 @@
     "hpBonus": 35,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S02",
@@ -715,7 +711,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S03",
@@ -729,7 +725,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BONUS_S04",
@@ -743,7 +739,21 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
+  },
+  {
+    "id": "ITEM_MAT_LEATHER",
+    "name": "가죽",
+    "type": "material",
+    "rarity": "common",
+    "slot": null,
+    "stackMax": 999,
+    "atk": 0,
+    "def": 0,
+    "hpBonus": 0,
+    "priceBuy": 5,
+    "priceSell": 2,
+    "effectString": null
   },
   {
     "id": "ITEM_TROPHY_BOSS_S02",
@@ -757,7 +767,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_ICON_BOSS_S02",
@@ -771,7 +781,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BOSS_S02",
@@ -785,7 +795,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S07",
@@ -799,7 +809,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S08",
@@ -813,7 +823,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S09",
@@ -827,7 +837,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BONUS_S10",
@@ -841,7 +851,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TITLE_BOSS_S1_RESIDUE_BROKER",
@@ -855,7 +865,7 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   },
   {
     "id": "ITEM_TROPHY_BOSS_S1_RESIDUE_BROKER",
@@ -869,6 +879,6 @@
     "hpBonus": 0,
     "priceBuy": 0,
     "priceSell": 0,
-    "effectJson": {}
+    "effectString": null
   }
 ]

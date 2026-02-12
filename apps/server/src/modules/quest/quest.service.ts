@@ -175,8 +175,8 @@ export class QuestService {
     });
 
     return progressList.map(p => {
-      const objectives = (p.quest.objectivesJson as unknown) as QuestObjective[];
-      const progress = (p.progressJson as QuestProgress) || {};
+      const objectives = (p.quest as any).objectivesString ? JSON.parse((p.quest as any).objectivesString) as QuestObjective[] : [];
+      const progress = (p as any).progressString ? JSON.parse((p as any).progressString) as QuestProgress : {};
       
       const cadence = this.seasonService.parseCadence(p.quest.id);
       const isMeta = this.seasonService.isMetaQuest(p.quest.id);
@@ -299,7 +299,8 @@ export class QuestService {
 
     // 초기 진행도 생성
     const initialProgress: QuestProgress = {};
-    ((template.objectivesJson as unknown) as QuestObjective[]).forEach((_, idx) => {
+    const objectives = (template as any).objectivesString ? JSON.parse((template as any).objectivesString) as QuestObjective[] : [];
+    objectives.forEach((_, idx) => {
       initialProgress[idx] = 0;
     });
 
@@ -309,15 +310,15 @@ export class QuestService {
         characterId,
         questId,
         status: 'ACTIVE',
-        progressJson: initialProgress,
-      },
+        progressString: JSON.stringify(initialProgress),
+      } as any,
       update: {
         status: 'ACTIVE',
-        progressJson: initialProgress,
+        progressString: JSON.stringify(initialProgress),
         acceptedAt: new Date(),
         completedAt: null,
         turnedInAt: null,
-      },
+      } as any,
     });
   }
 
@@ -337,8 +338,8 @@ export class QuestService {
     const completedIds: string[] = [];
 
     for (const progress of activeQuests) {
-      const objectives = (progress.quest.objectivesJson as unknown) as QuestObjective[];
-      let progressData = (progress.progressJson as QuestProgress) || {};
+      const objectives = (progress.quest as any).objectivesString ? JSON.parse((progress.quest as any).objectivesString) as QuestObjective[] : [];
+      let progressData = (progress as any).progressString ? JSON.parse((progress as any).progressString) as QuestProgress : {};
       let changed = false;
 
       objectives.forEach((obj, idx) => {
@@ -353,10 +354,10 @@ export class QuestService {
         await this.prisma.questProgress.update({
           where: { id: progress.id },
           data: {
-            progressJson: progressData,
+            progressString: JSON.stringify(progressData),
             status: isComplete ? 'COMPLETED' : 'ACTIVE',
             completedAt: isComplete ? new Date() : progress.completedAt,
-          },
+          } as any,
         });
         anyChanged = true;
         if (isComplete) {
@@ -389,8 +390,8 @@ export class QuestService {
     const completedIds: string[] = [];
 
     for (const progress of activeQuests) {
-      const objectives = (progress.quest.objectivesJson as unknown) as QuestObjective[];
-      let progressData = (progress.progressJson as QuestProgress) || {};
+      const objectives = (progress.quest as any).objectivesString ? JSON.parse((progress.quest as any).objectivesString) as QuestObjective[] : [];
+      let progressData = (progress as any).progressString ? JSON.parse((progress as any).progressString) as QuestProgress : {};
       let changed = false;
 
       objectives.forEach((obj, idx) => {
@@ -415,10 +416,10 @@ export class QuestService {
         await this.prisma.questProgress.update({
           where: { id: progress.id },
           data: {
-            progressJson: progressData,
+            progressString: JSON.stringify(progressData),
             status: isComplete ? 'COMPLETED' : 'ACTIVE',
             completedAt: isComplete ? new Date() : progress.completedAt,
-          },
+          } as any,
         });
         anyChanged = true;
         if (isComplete) {
@@ -448,8 +449,8 @@ export class QuestService {
     const completedIds: string[] = [];
 
     for (const progress of activeQuests) {
-      const objectives = (progress.quest.objectivesJson as unknown) as QuestObjective[];
-      let progressData = (progress.progressJson as QuestProgress) || {};
+      const objectives = (progress.quest as any).objectivesString ? JSON.parse((progress.quest as any).objectivesString) as QuestObjective[] : [];
+      let progressData = (progress as any).progressString ? JSON.parse((progress as any).progressString) as QuestProgress : {};
       let changed = false;
 
       objectives.forEach((obj, idx) => {
@@ -464,10 +465,10 @@ export class QuestService {
         await this.prisma.questProgress.update({
           where: { id: progress.id },
           data: {
-            progressJson: progressData,
+            progressString: JSON.stringify(progressData),
             status: isComplete ? 'COMPLETED' : 'ACTIVE',
             completedAt: isComplete ? new Date() : progress.completedAt,
-          },
+          } as any,
         });
         anyChanged = true;
         if (isComplete) {
@@ -514,7 +515,7 @@ export class QuestService {
         throw new Error('이 방에서는 퀘스트를 제출할 수 없습니다.');
       }
 
-      const rewards = progress.quest.rewardsJson as QuestReward;
+      const rewards = (progress.quest as any).rewardsString ? JSON.parse((progress.quest as any).rewardsString) as QuestReward : { gold: 0, exp: 0, items: [] };
 
       // 골드/경험치 지급
       const character = await tx.character.findUnique({

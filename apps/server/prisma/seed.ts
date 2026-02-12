@@ -137,8 +137,14 @@ async function seedRooms() {
   for (const room of rooms) {
     await prisma.room.upsert({
       where: { id: room.id },
-      update: room,
-      create: room,
+      update: {
+        ...room,
+        tags: room.tags ? JSON.stringify(room.tags) : null as any,
+      },
+      create: {
+        ...room,
+        tags: room.tags ? JSON.stringify(room.tags) : null as any,
+      },
     });
   }
 
@@ -279,7 +285,6 @@ async function seedExits() {
     // 2. 새 RoomExit 일괄 생성
     await tx.roomExit.createMany({
       data: exits,
-      skipDuplicates: true,
     });
     
     // 3. 검증 (개수 확인)
@@ -327,33 +332,58 @@ async function seedMonsters() {
   console.log('👹 몬스터 생성 중...');
 
   const monsters = [
-    { id: 'MON_RAT', name: '쥐', level: 1, hp: 20, atk: 5, def: 2, aiJson: { behavior: 'passive' } },
-    { id: 'MON_GOBLIN', name: '고블린', level: 2, hp: 40, atk: 8, def: 4, aiJson: { behavior: 'aggressive' } },
-    { id: 'MON_WOLF', name: '늑대', level: 3, hp: 60, atk: 12, def: 6, aiJson: { behavior: 'aggressive' } },
-    { id: 'MON_ORC', name: '오크', level: 4, hp: 100, atk: 15, def: 10, aiJson: { behavior: 'aggressive' } },
-    { id: 'MON_SKELETON', name: '스켈레톤', level: 5, hp: 80, atk: 18, def: 8, aiJson: { behavior: 'aggressive' } },
-    { id: 'MON_ZOMBIE', name: '좀비', level: 5, hp: 120, atk: 10, def: 12, aiJson: { behavior: 'slow' } },
-    { id: 'MON_SPIDER', name: '거미', level: 6, hp: 90, atk: 20, def: 7, aiJson: { behavior: 'ambush' } },
-    { id: 'MON_BANDIT', name: '산적', level: 7, hp: 150, atk: 22, def: 15, aiJson: { behavior: 'tactical' } },
-    { id: 'MON_GOLEM', name: '골렘', level: 8, hp: 200, atk: 25, def: 20, aiJson: { behavior: 'defensive' } },
-    { id: 'MON_VAMPIRE', name: '뱀파이어', level: 10, hp: 250, atk: 30, def: 18, aiJson: { behavior: 'lifesteal' } },
-    { id: 'MON_DEMON', name: '악마', level: 12, hp: 300, atk: 35, def: 25, aiJson: { behavior: 'aggressive' } },
-    { id: 'MON_DRAGON', name: '드래곤', level: 15, hp: 500, atk: 50, def: 40, aiJson: { behavior: 'boss' } },
+    // 레벨 1-5 (초보 지역)
+    { id: 'MON_RAT', name: '쥐', level: 1, hp: 50, atk: 5, def: 1, aiJson: { behavior: 'passive' } },
+    { id: 'MON_GOBLIN', name: '고블린', level: 2, hp: 80, atk: 8, def: 2, aiJson: { behavior: 'aggressive' } },
+    { id: 'MON_WOLF', name: '늑대', level: 3, hp: 120, atk: 12, def: 4, aiJson: { behavior: 'aggressive' } },
+    { id: 'MON_ORC', name: '오크', level: 4, hp: 160, atk: 15, def: 6, aiJson: { behavior: 'aggressive' } },
+    { id: 'MON_SKELETON', name: '스켈레톤', level: 5, hp: 200, atk: 18, def: 8, aiJson: { behavior: 'aggressive' } },
+    { id: 'MON_ZOMBIE', name: '좀비', level: 5, hp: 220, atk: 16, def: 10, aiJson: { behavior: 'slow' } },
+    
+    // 레벨 6-10
+    { id: 'MON_SPIDER', name: '거미', level: 6, hp: 260, atk: 20, def: 10, aiJson: { behavior: 'ambush' } },
+    { id: 'MON_BANDIT', name: '산적', level: 7, hp: 300, atk: 25, def: 12, aiJson: { behavior: 'tactical' } },
+    { id: 'MON_GOLEM', name: '골렘', level: 8, hp: 400, atk: 28, def: 18, aiJson: { behavior: 'defensive' } },
+    { id: 'MON_VAMPIRE', name: '뱀파이어', level: 10, hp: 500, atk: 35, def: 20, aiJson: { behavior: 'lifesteal' } },
+    
+    // 레벨 11-15
+    { id: 'MON_DEMON', name: '악마', level: 12, hp: 650, atk: 45, def: 25, aiJson: { behavior: 'aggressive' } },
+    { id: 'MON_DRAGON', name: '드래곤', level: 15, hp: 1000, atk: 60, def: 35, aiJson: { behavior: 'boss' } },
+    
     // S1 보스
-    { id: 'BOSS_RESIDUE_BROKER', name: '잔재 브로커', level: 10, hp: 200, atk: 20, def: 15, aiJson: { behavior: 'boss' } },
+    { id: 'BOSS_RESIDUE_BROKER', name: '잔재 브로커', level: 10, hp: 600, atk: 40, def: 25, aiJson: { behavior: 'boss' } },
+    
     // S2 몬스터
-    { id: 'M_S2_FOG_SCRIBE', name: '안개 서기', level: 13, hp: 320, atk: 38, def: 28, aiJson: { behavior: 'aggressive' } },
-    { id: 'M_S2_PAGE_WRAITH', name: '페이지 망령', level: 14, hp: 280, atk: 42, def: 24, aiJson: { behavior: 'ambush' } },
-    { id: 'M_S2_INK_LEECH', name: '잉크 거머리', level: 15, hp: 340, atk: 40, def: 30, aiJson: { behavior: 'lifesteal' } },
+    { id: 'M_S2_FOG_SCRIBE', name: '안개 서기', level: 13, hp: 750, atk: 50, def: 28, aiJson: { behavior: 'aggressive' } },
+    { id: 'M_S2_PAGE_WRAITH', name: '페이지 망령', level: 14, hp: 800, atk: 55, def: 30, aiJson: { behavior: 'ambush' } },
+    { id: 'M_S2_INK_LEECH', name: '잉크 거머리', level: 15, hp: 850, atk: 58, def: 32, aiJson: { behavior: 'lifesteal' } },
+    
     // S2 보스
-    { id: 'BOSS_TOME_WARDEN', name: '서고의 파수꾼', level: 18, hp: 450, atk: 45, def: 35, aiJson: { behavior: 'boss' } },
+    { id: 'BOSS_TOME_WARDEN', name: '서고의 파수꾼', level: 18, hp: 1500, atk: 70, def: 40, aiJson: { behavior: 'boss' } },
+    
+    // 추가 몬스터 (레벨 16-20)
+    { id: 'MON_LICH', name: '리치', level: 16, hp: 1200, atk: 65, def: 38, aiJson: { behavior: 'magic' } },
+    { id: 'MON_BEHEMOTH', name: '베헤모스', level: 18, hp: 1800, atk: 75, def: 45, aiJson: { behavior: 'tank' } },
+    { id: 'MON_PHOENIX', name: '피닉스', level: 20, hp: 2000, atk: 80, def: 50, aiJson: { behavior: 'resurrect' } },
+    
+    // 추가 몬스터 (레벨 21-30)
+    { id: 'MON_TITAN', name: '타이탄', level: 25, hp: 3000, atk: 100, def: 60, aiJson: { behavior: 'boss' } },
+    { id: 'MON_ARCHDEMON', name: '대악마', level: 30, hp: 5000, atk: 150, def: 80, aiJson: { behavior: 'boss' } },
   ];
 
   for (const monster of monsters) {
+    const { aiJson, ...monsterData } = monster as any;
+    const aiString = aiJson ? JSON.stringify(aiJson) : null;
     await prisma.monster.upsert({
       where: { id: monster.id },
-      update: monster,
-      create: monster,
+      update: {
+        ...monsterData,
+        aiString,
+      } as any,
+      create: {
+        ...monsterData,
+        aiString,
+      } as any,
     });
   }
 
@@ -425,10 +455,18 @@ async function seedItems() {
   const itemsData = JSON.parse(fs.readFileSync(itemsJsonPath, 'utf-8'));
 
   for (const item of itemsData) {
+    const { effectJson, ...itemData } = item as any;
+    const effectString = effectJson ? JSON.stringify(effectJson) : null;
     await prisma.item.upsert({
       where: { id: item.id },
-      update: item,
-      create: item,
+      update: {
+        ...itemData,
+        effectString,
+      } as any,
+      create: {
+        ...itemData,
+        effectString,
+      } as any,
     });
   }
 
@@ -515,7 +553,13 @@ async function seedQuests() {
 
   if (fs.existsSync(questsJsonPath)) {
     const questsData = fs.readFileSync(questsJsonPath, 'utf-8');
-    quests = JSON.parse(questsData);
+    const questsRaw = JSON.parse(questsData);
+    // objectivesJson/rewardsJson을 objectivesString/rewardsString으로 변환
+    quests = questsRaw.map((q: any) => ({
+      ...q,
+      objectivesString: q.objectivesJson ? JSON.stringify(q.objectivesJson) : JSON.stringify([]),
+      rewardsString: q.rewardsJson ? JSON.stringify(q.rewardsJson) : JSON.stringify({ gold: 0, exp: 0, items: [] }),
+    }));
     console.log(`  - content/quests.json에서 ${quests.length}개 로드`);
   } else {
     console.log(`  ⚠️  content/quests.json을 찾을 수 없습니다. 기본 퀘스트 3개만 생성합니다.`);
@@ -528,8 +572,8 @@ async function seedQuests() {
         turninRoomId: 'START_TOWN',
         minLevel: 1,
         repeatable: false,
-        objectivesJson: [{ type: 'VISIT_ROOM', roomId: 'R1_00', count: 1 }],
-        rewardsJson: { gold: 50, exp: 30, items: [] },
+        objectivesString: JSON.stringify([{ type: 'VISIT_ROOM', roomId: 'R1_00', count: 1 }]),
+        rewardsString: JSON.stringify({ gold: 50, exp: 30, items: [] }),
       },
       {
         id: 'Q_FIRST_BLOOD_R1',
@@ -539,8 +583,8 @@ async function seedQuests() {
         turninRoomId: 'START_TOWN',
         minLevel: 1,
         repeatable: false,
-        objectivesJson: [{ type: 'KILL_IN_ZONE', zoneId: 'R1', count: 3 }],
-        rewardsJson: { gold: 100, exp: 80, items: [{ itemId: 'ITEM_POTION_HP_S', qty: 2 }] },
+        objectivesString: JSON.stringify([{ type: 'KILL_IN_ZONE', zoneId: 'R1', count: 3 }]),
+        rewardsString: JSON.stringify({ gold: 100, exp: 80, items: [{ itemId: 'ITEM_POTION_HP_S', qty: 2 }] }),
       },
       {
         id: 'Q_MARKET_POTION',
@@ -550,17 +594,19 @@ async function seedQuests() {
         turninRoomId: 'START_TOWN',
         minLevel: 1,
         repeatable: false,
-        objectivesJson: [{ type: 'COLLECT_ITEM', itemId: 'ITEM_POTION_HP_S', count: 1 }],
-        rewardsJson: { gold: 30, exp: 20, items: [] },
+        objectivesString: JSON.stringify([{ type: 'COLLECT_ITEM', itemId: 'ITEM_POTION_HP_S', count: 1 }]),
+        rewardsString: JSON.stringify({ gold: 30, exp: 20, items: [] }),
       },
     ];
   }
 
   for (const quest of quests) {
+    // objectivesJson/rewardsJson 제거 (이미 objectivesString/rewardsString으로 변환됨)
+    const { objectivesJson, rewardsJson, ...questData } = quest as any;
     await prisma.questTemplate.upsert({
       where: { id: quest.id },
-      update: quest,
-      create: quest,
+      update: questData,
+      create: questData,
     });
   }
 
